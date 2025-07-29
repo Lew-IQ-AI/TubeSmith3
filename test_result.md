@@ -249,6 +249,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "Script card display tested successfully. Shows '775 words • Professional YouTube script' with content preview and functional download button. Card appears immediately after script generation completes."
+      - working: true
+        agent: "testing"
+        comment: "COMPREHENSIVE CONTENT DISPLAY TESTING: Script cards verified working with multiple topics. 'artificial intelligence' topic: 628 words displayed with proper formatting and preview. 'ancient mysteries' topic: 863 words displayed with proper formatting. Download buttons functional on all generated script cards. Content cards appear immediately after generation with proper word counts and content previews."
 
   - task: "Progress Tracking UI"
     implemented: true
