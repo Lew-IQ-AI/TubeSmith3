@@ -242,7 +242,10 @@ function App() {
       // Step 5: Generate YouTube metadata
       await generateMetadata(generatedContent.script?.content || '');
       
-      setCurrentStep('✅ AI video generation complete!');
+      // Step 6: Assemble final video
+      await assembleVideo(scriptId);
+      
+      setCurrentStep('✅ Complete YouTube video ready!');
       
     } catch (error) {
       console.error('Generation error:', error);
@@ -254,6 +257,39 @@ function App() {
       }, 5000);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const assembleVideo = async (scriptId) => {
+    try {
+      setCurrentStep('🎬 Assembling final video...');
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes timeout
+      
+      const response = await fetch(`${BACKEND_URL}/api/assemble-video`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ script_id: scriptId, topic }),
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Video assembly failed: ${errorData}`);
+      }
+      
+      const result = await response.json();
+      setGeneratedContent(prev => ({ ...prev, video: result }));
+      return result;
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Video assembly timed out. This can take several minutes for longer videos.');
+      }
+      console.error('Video assembly failed:', error);
+      throw error;
     }
   };
 
