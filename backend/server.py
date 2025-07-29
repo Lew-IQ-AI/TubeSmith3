@@ -571,14 +571,25 @@ async def get_video_status(video_id: str):
             else:
                 raise HTTPException(status_code=404, detail="Video not found")
         
-        # Check if video file exists but status shows processing (recovery mechanism)
-        if status.get("status") == "processing" and status.get("progress", 0) >= 80:
+        # Check if video file exists but status shows processing/failed (recovery mechanism)
+        if status.get("status") in ["processing", "failed"] and status.get("progress", 0) >= 30:
             video_file = f"generated_content/videos/{video_id}.mp4"
             if os.path.exists(video_file):
                 try:
                     file_size = os.path.getsize(video_file)
-                    if file_size > 10000:  # File exists and is reasonable size
+                    if file_size > 50000:  # File exists and is reasonable size (50KB+)
                         print(f"Recovering video status for {video_id} - file exists with size {file_size}")
+                        
+                        # Get audio duration for better metadata
+                        try:
+                            import subprocess
+                            duration_cmd = ['ffprobe', '-v', 'quiet', '-show_entries', 'format=duration', 
+                                          '-of', 'default=noprint_wrappers=1:nokey=1', video_file]
+                            duration_result = subprocess.run(duration_cmd, capture_output=True, text=True, timeout=10)
+                            video_duration = float(duration_result.stdout.strip()) if duration_result.stdout.strip() else None
+                        except:
+                            video_duration = None
+                        
                         # Update status to completed
                         status.update({
                             "status": "completed",
@@ -586,10 +597,21 @@ async def get_video_status(video_id: str):
                             "message": "Video ready for download!",
                             "file_size": file_size,
                             "video_path": video_file,
+                            "duration": video_duration or status.get("duration", 60),
                             "clips_used": 1
                         })
                         video_status[video_id] = status
                         update_video_status(video_id, "completed", 100, "Video ready for download!")
+                        
+                        # Also update the persistent file data
+                        try:
+                            video_status[video_id].update({
+                                "file_size": file_size,
+                                "duration": video_duration or status.get("duration", 60)
+                            })
+                        except:
+                            pass
+                            
                 except Exception as e:
                     print(f"Error in status recovery: {e}")
         
