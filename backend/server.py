@@ -433,7 +433,7 @@ def process_video_background(video_id: str, script_id: str, topic: str):
         try:
             # Create video using ARM64-optimized FFmpeg command for static image + audio
             ffmpeg_cmd = [
-                'ffmpeg', '-y',  # Overwrite output file
+                '/usr/bin/ffmpeg', '-y',  # Overwrite output file (use full path)
                 '-f', 'image2',  # Specify image input format
                 '-loop', '1',    # Loop the image
                 '-i', thumbnail_path,  # Input image
