@@ -265,10 +265,10 @@ function App() {
 
   const assembleVideo = async (scriptId) => {
     try {
-      setCurrentStep('🎬 Assembling final video...');
+      setCurrentStep('🎬 Starting video assembly...');
       
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes timeout
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 1 minute timeout for starting
       
       const response = await fetch(`${BACKEND_URL}/api/assemble-video`, {
         method: 'POST',
@@ -285,16 +285,75 @@ function App() {
       }
       
       const result = await response.json();
-      setGeneratedContent(prev => ({ ...prev, video: result }));
+      
+      // Start polling for status
+      startStatusPolling(result.video_id);
+      
       return result;
     } catch (error) {
       if (error.name === 'AbortError') {
-        throw new Error('Video assembly timed out. This can take several minutes for longer videos.');
+        throw new Error('Failed to start video assembly. Please try again.');
       }
-      console.error('Video assembly failed:', error);
+      console.error('Video assembly startup failed:', error);
       throw error;
     }
   };
+
+  const startStatusPolling = (videoId) => {
+    // Clear any existing polling
+    if (statusPollingInterval) {
+      clearInterval(statusPollingInterval);
+    }
+    
+    const pollStatus = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/video-status/${videoId}`);
+        if (response.ok) {
+          const status = await response.json();
+          setVideoProcessingStatus(status);
+          
+          // Update current step with progress
+          if (status.status === 'processing') {
+            setCurrentStep(`🎬 ${status.message} (${status.progress}%)`);
+          } else if (status.status === 'completed') {
+            setCurrentStep('✅ Video assembly complete!');
+            setGeneratedContent(prev => ({ 
+              ...prev, 
+              video: {
+                video_id: videoId,
+                duration: status.duration,
+                file_size: status.file_size,
+                clips_used: status.clips_used,
+                status: 'success'
+              }
+            }));
+            clearInterval(statusPollingInterval);
+            setStatusPollingInterval(null);
+          } else if (status.status === 'failed') {
+            setCurrentStep(`❌ Video assembly failed: ${status.error}`);
+            clearInterval(statusPollingInterval);
+            setStatusPollingInterval(null);
+          }
+        }
+      } catch (error) {
+        console.error('Status polling error:', error);
+      }
+    };
+    
+    // Poll immediately, then every 2 seconds
+    pollStatus();
+    const interval = setInterval(pollStatus, 2000);
+    setStatusPollingInterval(interval);
+  };
+
+  // Cleanup polling on unmount
+  React.useEffect(() => {
+    return () => {
+      if (statusPollingInterval) {
+        clearInterval(statusPollingInterval);
+      }
+    };
+  }, [statusPollingInterval]);
 
   const downloadFile = (fileType, fileId) => {
     const downloadUrl = `${BACKEND_URL}/api/download/${fileType}/${fileId}`;
