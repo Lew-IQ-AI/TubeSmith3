@@ -262,6 +262,14 @@ function App() {
     window.open(downloadUrl, '_blank');
   };
 
+  const isVideoComplete = generatedContent.script && generatedContent.audio && generatedContent.thumbnail && generatedContent.videos;
+
+  const handleThumbnailClick = () => {
+    if (isVideoComplete) {
+      setShowVideoPreview(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
       {/* Header - Extra Compact */}
