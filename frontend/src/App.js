@@ -19,16 +19,33 @@ function App() {
   const testIntegrations = async () => {
     try {
       setCurrentStep('Testing AI integrations...');
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds timeout
+      
       const response = await fetch(`${BACKEND_URL}/api/test-integrations`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Integration test failed: ${errorData}`);
+      }
+      
       const results = await response.json();
       setTestResults(results);
       setCurrentStep('Integration test completed');
     } catch (error) {
-      console.error('Integration test failed:', error);
-      setCurrentStep('Integration test failed');
+      if (error.name === 'AbortError') {
+        setCurrentStep('Integration test timed out');
+      } else {
+        console.error('Integration test failed:', error);
+        setCurrentStep('Integration test failed');
+      }
     }
   };
 
