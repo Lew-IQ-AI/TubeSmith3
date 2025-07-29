@@ -60,6 +60,7 @@ os.makedirs("generated_content/audio", exist_ok=True)
 os.makedirs("generated_content/thumbnails", exist_ok=True)
 os.makedirs("generated_content/videos", exist_ok=True)
 os.makedirs("generated_content/status", exist_ok=True)
+os.makedirs("generated_content/temp_videos", exist_ok=True)
 
 # Mount static files
 app.mount("/generated_content", StaticFiles(directory="generated_content"), name="generated_content")
