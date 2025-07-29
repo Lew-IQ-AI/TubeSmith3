@@ -1,56 +1,74 @@
 {
-  "timestamp": "2025-07-29T13:35:20.115203",
-  "total_tests": 8,
-  "passed_tests": 0,
-  "success_rate": 0.0,
+  "timestamp": "2025-07-29T13:37:28.399451",
+  "total_tests": 11,
+  "passed_tests": 6,
+  "success_rate": 0.5454545454545454,
   "results": [
     {
       "name": "Health Check",
+      "success": true,
+      "details": "Status: healthy, Message: AI YouTube Generator API is running",
+      "timestamp": "2025-07-29T13:36:45.799969"
+    },
+    {
+      "name": "OpenAI Integration",
+      "success": true,
+      "details": "Working",
+      "timestamp": "2025-07-29T13:36:47.199762"
+    },
+    {
+      "name": "ElevenLabs Integration",
       "success": false,
-      "details": "HTTP 502",
-      "timestamp": "2025-07-29T13:35:09.979989"
+      "details": "headers: {'date': 'Tue, 29 Jul 2025 13:36:46 GMT', 'server': 'uvicorn', 'content-length': '141', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=31536000; includeSubDomains', 'x-trace-id': '18c4600e7c1dd7b62f18362ab0e27854', 'x-region': 'us-central1', 'via': '1.1 google, 1.1 google', 'alt-svc': 'h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'missing_permissions', 'message': 'The API key you used is missing the permission voices_read to execute this operation.'}}",
+      "timestamp": "2025-07-29T13:36:47.199786"
+    },
+    {
+      "name": "Pexels Integration",
+      "success": true,
+      "details": "Working",
+      "timestamp": "2025-07-29T13:36:47.199791"
     },
     {
       "name": "AI Integrations Test",
-      "success": false,
-      "details": "HTTP 502",
-      "timestamp": "2025-07-29T13:35:09.996816"
+      "success": true,
+      "details": "OpenAI: success, ElevenLabs: error, Pexels: success",
+      "timestamp": "2025-07-29T13:36:47.199797"
     },
     {
       "name": "Script Generation",
-      "success": false,
-      "details": "HTTP 502",
-      "timestamp": "2025-07-29T13:35:10.022534"
+      "success": true,
+      "details": "Script ID: b9532476-acff-4dc2-a75e-199bb23a6ca2, Words: 511",
+      "timestamp": "2025-07-29T13:37:18.224488"
     },
     {
       "name": "Voice Generation",
       "success": false,
-      "details": "No script_id available",
-      "timestamp": "2025-07-29T13:35:12.022953"
+      "details": "HTTP 422",
+      "timestamp": "2025-07-29T13:37:20.292194"
     },
     {
       "name": "Thumbnail Generation",
       "success": false,
-      "details": "HTTP 502",
-      "timestamp": "2025-07-29T13:35:14.043738"
+      "details": "HTTP 422",
+      "timestamp": "2025-07-29T13:37:22.310584"
     },
     {
       "name": "Stock Videos Search",
       "success": false,
-      "details": "HTTP 502",
-      "timestamp": "2025-07-29T13:35:16.093399"
+      "details": "HTTP 422",
+      "timestamp": "2025-07-29T13:37:24.337132"
     },
     {
       "name": "YouTube Metadata Generation",
       "success": false,
-      "details": "HTTP 502",
-      "timestamp": "2025-07-29T13:35:18.114593"
+      "details": "HTTP 422",
+      "timestamp": "2025-07-29T13:37:26.378162"
     },
     {
       "name": "File Download",
-      "success": false,
-      "details": "No script_id available",
-      "timestamp": "2025-07-29T13:35:20.114987"
+      "success": true,
+      "details": "Downloaded 3276 bytes",
+      "timestamp": "2025-07-29T13:37:28.399047"
     }
   ]
 }
