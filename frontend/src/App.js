@@ -35,18 +35,32 @@ function App() {
   const generateScript = async () => {
     try {
       setCurrentStep('Generating AI script...');
+      
+      // Create AbortController for timeout handling
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minutes timeout
+      
       const response = await fetch(`${BACKEND_URL}/api/generate-script`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, duration_minutes: 12 })
+        body: JSON.stringify({ topic, duration_minutes: 12 }),
+        signal: controller.signal
       });
       
-      if (!response.ok) throw new Error('Script generation failed');
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Script generation failed: ${errorData}`);
+      }
       
       const result = await response.json();
       setGeneratedContent(prev => ({ ...prev, script: result }));
       return result.script_id;
     } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Script generation timed out. Please try again.');
+      }
       console.error('Script generation failed:', error);
       throw error;
     }
