@@ -690,6 +690,9 @@ async def download_file(file_type: str, file_id: str):
             media_type=media_type
         )
         
+    except HTTPException:
+        # Re-raise HTTPExceptions to preserve status codes
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"File download failed: {str(e)}")
 
