@@ -81,7 +81,7 @@ async def test_ai_integrations():
     # Test ElevenLabs
     try:
         voices = elevenlabs_client.voices.get_all()
-        results["elevenlabs"] = {"status": "success", "voices_count": len(voices.voices)}
+        results["elevenlabs"] = {"status": "success", "voices_count": len(voices.voices) if hasattr(voices, 'voices') else len(voices)}
     except Exception as e:
         results["elevenlabs"] = {"status": "error", "error": str(e)}
     
