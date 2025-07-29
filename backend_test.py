@@ -207,9 +207,9 @@ class TubeSmithAPITester:
         """Comprehensive test of all download endpoints"""
         print("\n📥 Download Endpoints Testing:")
         
-        # Test existing files from previous tests
+        # Test existing files from previous tests - use actual existing files
         test_files = {
-            "script": "237bd775-0fe5-4a66-b8f4-e89c3dc56c11",
+            "script": "0c90d496-a7eb-4408-bff1-7fb9cc169096",
             "audio": "a73409c0-4192-41e9-9329-3c2a7dfb8932", 
             "thumbnail": "78753f66-df79-49d2-af80-d05c72fedf05",
             "video": "237bd775-0fe5-4a66-b8f4-e89c3dc56c11"
