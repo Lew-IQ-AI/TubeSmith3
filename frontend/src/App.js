@@ -168,18 +168,31 @@ function App() {
   const generateMetadata = async (scriptContent) => {
     try {
       setCurrentStep('Generating YouTube optimization...');
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 1 minute timeout
+      
       const response = await fetch(`${BACKEND_URL}/api/generate-youtube-metadata`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, script_content: scriptContent })
+        body: JSON.stringify({ topic, script_content: scriptContent }),
+        signal: controller.signal
       });
       
-      if (!response.ok) throw new Error('Metadata generation failed');
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Metadata generation failed: ${errorData}`);
+      }
       
       const result = await response.json();
       setGeneratedContent(prev => ({ ...prev, metadata: result }));
       return result;
     } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Metadata generation timed out. Please try again.');
+      }
       console.error('Metadata generation failed:', error);
       throw error;
     }
