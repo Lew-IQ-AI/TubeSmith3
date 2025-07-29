@@ -236,15 +236,21 @@ async def generate_thumbnail(request: dict):
     try:
         topic = request.get("topic", "")
         prompt = f"""
-        Create a highly engaging, clickbait-style YouTube thumbnail for a video about "{topic}".
+        Create a highly engaging, professional YouTube thumbnail image for a video about "{topic}".
         
-        Style requirements:
-        - Bold, eye-catching design
-        - Dramatic lighting and colors
+        CRITICAL REQUIREMENTS:
+        - NO TEXT OR WORDS in the image at all
+        - NO letters, numbers, or written content
+        - Focus on powerful visual imagery only
+        - Dramatic, cinematic composition
         - High contrast and vibrant colors
-        - Professional quality
-        - Optimized for small screen viewing
-        - Should evoke curiosity and emotion
+        - Professional photography style
+        - Should evoke strong emotion and curiosity
+        - Optimized for YouTube thumbnail format
+        - Dark, mysterious atmosphere if the topic is serious
+        - Bright, energetic if the topic is upbeat
+        
+        Style: Professional digital art, photorealistic, movie poster quality, no text overlay.
         """
         
         response = openai_client.images.generate(
