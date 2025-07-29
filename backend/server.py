@@ -386,10 +386,10 @@ def update_video_status(video_id: str, status: str, progress: int = 0, message: 
         print(f"Failed to save status: {e}")
 
 def process_video_background(video_id: str, script_id: str, topic: str):
-    """Background video processing function - creates actual MP4 video"""
+    """Background video processing function - creates actual MP4 video from thumbnail + audio"""
     try:
         print(f"Starting background video processing for {video_id}")
-        update_video_status(video_id, "processing", 5, "Starting video assembly...")
+        update_video_status(video_id, "processing", 10, "Starting video assembly...")
         
         # Check required files
         script_path = f"generated_content/scripts/{script_id}.txt"
@@ -399,134 +399,75 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             update_video_status(video_id, "failed", 0, "", "Required files not found")
             return
         
-        # Get stock images from Pexels (instead of videos for simplicity)
-        update_video_status(video_id, "processing", 15, "Getting stock images...")
-        import requests
-        headers = {"Authorization": PEXELS_API_KEY}
-        search_url = f"https://api.pexels.com/v1/search?query={topic}&per_page=3&orientation=landscape"
-        response = requests.get(search_url, headers=headers, timeout=30)
+        # Find the corresponding thumbnail (same script_id pattern)
+        import glob
+        thumbnail_pattern = f"generated_content/thumbnails/*.png"
+        thumbnail_files = glob.glob(thumbnail_pattern)
         
-        if response.status_code != 200:
-            update_video_status(video_id, "failed", 0, "", f"Failed to get stock images: {response.status_code}")
+        if not thumbnail_files:
+            update_video_status(video_id, "failed", 0, "", "No thumbnail found for video creation")
             return
         
-        data = response.json()
-        images = []
-        for photo in data.get('photos', []):
-            images.append({
-                "id": photo['id'],
-                "url": photo['src']['large'],
-                "photographer": photo.get('photographer', 'Unknown')
-            })
+        # Use the most recent thumbnail
+        thumbnail_path = max(thumbnail_files, key=os.path.getctime)
         
-        if not images:
-            update_video_status(video_id, "failed", 0, "", "No stock images found")
-            return
+        update_video_status(video_id, "processing", 30, "Preparing video components...")
         
-        # Download images
-        update_video_status(video_id, "processing", 30, "Downloading images...")
-        image_files = []
+        # Get audio duration using a simple approach
+        try:
+            import subprocess
+            duration_cmd = ['ffprobe', '-v', 'quiet', '-show_entries', 'format=duration', 
+                          '-of', 'default=noprint_wrappers=1:nokey=1', audio_path]
+            duration_result = subprocess.run(duration_cmd, capture_output=True, text=True, timeout=10)
+            audio_duration = float(duration_result.stdout.strip()) if duration_result.stdout.strip() else 60.0
+        except:
+            # Fallback: assume reasonable duration
+            audio_duration = 60.0
         
-        for i, image in enumerate(images):
-            try:
-                img_response = requests.get(image["url"], timeout=30)
-                if img_response.status_code == 200:
-                    temp_image_path = f"/tmp/image_{i}_{video_id}.jpg"
-                    with open(temp_image_path, 'wb') as f:
-                        f.write(img_response.content)
-                    image_files.append(temp_image_path)
-                    update_video_status(video_id, "processing", 30 + (i+1)*10, f"Downloaded image {i+1}/3")
-            except Exception as e:
-                print(f"Failed to download image {i}: {str(e)}")
-                continue
-        
-        if not image_files:
-            update_video_status(video_id, "failed", 0, "", "Failed to download any images")
-            return
-        
-        # Create video using FFmpeg directly (more reliable than MoviePy)
-        update_video_status(video_id, "processing", 70, "Creating video with images and audio...")
+        update_video_status(video_id, "processing", 60, "Creating video with thumbnail and audio...")
         
         output_path = f"generated_content/videos/{video_id}.mp4"
         
         try:
-            # Get audio duration
-            import subprocess
-            duration_cmd = [
-                'ffprobe', '-v', 'quiet', '-show_entries', 'format=duration',
-                '-of', 'default=noprint_wrappers=1:nokey=1', audio_path
-            ]
-            duration_result = subprocess.run(duration_cmd, capture_output=True, text=True, timeout=10)
-            audio_duration = float(duration_result.stdout.strip()) if duration_result.stdout.strip() else 60
-            
-            # Calculate how long each image should display
-            image_duration = audio_duration / len(image_files)
-            
-            update_video_status(video_id, "processing", 85, "Assembling final video...")
-            
-            # Create video with FFmpeg
+            # Create video using simple FFmpeg command
             ffmpeg_cmd = [
                 'ffmpeg', '-y',  # Overwrite output file
-                '-loop', '1', '-t', str(image_duration), '-i', image_files[0],
+                '-loop', '1',    # Loop the image
+                '-i', thumbnail_path,  # Input image
+                '-i', audio_path,      # Input audio
+                '-c:v', 'libx264',     # Video codec
+                '-c:a', 'aac',         # Audio codec
+                '-shortest',           # Stop when shortest stream ends
+                '-r', '30',            # Frame rate
+                '-vf', 'scale=1280:720',  # Scale to HD
+                '-t', str(min(audio_duration, 300)),  # Max 5 minutes
+                output_path
             ]
             
-            # Add additional images
-            for img_file in image_files[1:]:
-                ffmpeg_cmd.extend(['-loop', '1', '-t', str(image_duration), '-i', img_file])
+            update_video_status(video_id, "processing", 80, "Rendering final video...")
             
-            # Add audio
-            ffmpeg_cmd.extend(['-i', audio_path])
-            
-            # Set output options
-            ffmpeg_cmd.extend([
-                '-filter_complex', f'{"".join([f"[{i}:v]scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:-1:-1,setpts=PTS-STARTPTS+{i*image_duration}/TB[v{i}];" for i in range(len(image_files))])}{"".join([f"[v{i}]" for i in range(len(image_files))])}concat=n={len(image_files)}:v=1[outv]',
-                '-map', '[outv]', '-map', f'{len(image_files)}:a',
-                '-c:v', 'libx264', '-c:a', 'aac',
-                '-shortest', '-r', '30',
-                output_path
-            ])
-            
-            update_video_status(video_id, "processing", 95, "Rendering final video...")
-            
-            # Run FFmpeg
-            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=300)
+            # Run FFmpeg with timeout
+            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=180)
             
             if result.returncode != 0:
                 print(f"FFmpeg error: {result.stderr}")
-                # Fallback: create simple video with first image
-                simple_cmd = [
-                    'ffmpeg', '-y', '-loop', '1', '-i', image_files[0], '-i', audio_path,
-                    '-c:v', 'libx264', '-c:a', 'aac', '-shortest', '-r', '30',
-                    '-vf', 'scale=1280:720', output_path
-                ]
-                subprocess.run(simple_cmd, capture_output=True, timeout=180)
-            
-        except Exception as e:
-            print(f"Video creation failed: {e}")
-            # Create a very simple video as last resort
-            try:
-                simple_cmd = [
-                    'ffmpeg', '-y', '-loop', '1', '-i', image_files[0], '-i', audio_path,
-                    '-c:v', 'libx264', '-c:a', 'aac', '-shortest', '-t', '60',
-                    '-vf', 'scale=1280:720', output_path
-                ]
-                subprocess.run(simple_cmd, capture_output=True, timeout=120)
-            except:
-                update_video_status(video_id, "failed", 0, "", "Video creation failed")
+                update_video_status(video_id, "failed", 0, "", f"Video rendering failed: {result.stderr[:100]}")
                 return
+            
+        except subprocess.TimeoutExpired:
+            update_video_status(video_id, "failed", 0, "", "Video rendering timed out")
+            return
+        except Exception as e:
+            update_video_status(video_id, "failed", 0, "", f"Video creation error: {str(e)}")
+            return
         
-        # Clean up temp files
-        for temp_file in image_files:
-            try:
-                os.remove(temp_file)
-            except:
-                pass
+        update_video_status(video_id, "processing", 95, "Finalizing video file...")
         
-        # Get file size
+        # Check if video was created successfully
         try:
             file_size = os.path.getsize(output_path)
-            if file_size < 1000:  # If file is too small, it probably failed
-                update_video_status(video_id, "failed", 0, "", "Video file too small - creation may have failed")
+            if file_size < 10000:  # If file is too small (less than 10KB), it probably failed
+                update_video_status(video_id, "failed", 0, "", "Video file too small - creation failed")
                 return
         except:
             update_video_status(video_id, "failed", 0, "", "Video file not created")
@@ -540,10 +481,10 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             "video_path": output_path,
             "duration": audio_duration,
             "file_size": file_size,
-            "clips_used": len(images)
+            "clips_used": 1  # Using thumbnail as single "clip"
         })
         
-        print(f"Video creation completed: {video_id}, size: {file_size} bytes")
+        print(f"Video creation completed: {video_id}, size: {file_size} bytes, duration: {audio_duration}s")
         
     except Exception as e:
         print(f"Video processing failed: {str(e)}")
