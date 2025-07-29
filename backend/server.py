@@ -34,10 +34,18 @@ app.add_middleware(
 )
 
 # Initialize AI clients
-openai.api_key = os.getenv('OPENAI_API_KEY')
-openai_client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-elevenlabs_client = ElevenLabs(api_key=os.getenv('ELEVENLABS_API_KEY'))
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+ELEVENLABS_API_KEY = os.getenv('ELEVENLABS_API_KEY')
 PEXELS_API_KEY = os.getenv('PEXELS_API_KEY')
+
+# Initialize OpenAI client
+openai_client = openai.OpenAI(
+    api_key=OPENAI_API_KEY,
+    timeout=120  # 2 minutes timeout
+)
+
+# Initialize ElevenLabs client
+elevenlabs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 
 # Create directories for file storage
 os.makedirs("generated_content", exist_ok=True)
