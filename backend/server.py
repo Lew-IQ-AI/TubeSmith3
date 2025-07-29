@@ -449,21 +449,21 @@ def process_video_background(video_id: str, script_id: str, topic: str):
         output_path = f"generated_content/videos/{video_id}.mp4"
         
         try:
-            # Create video using ARM64-optimized FFmpeg command for static image + audio
+            # Create video using improved FFmpeg command for better compatibility
             ffmpeg_cmd = [
                 '/usr/bin/ffmpeg', '-y',  # Overwrite output file (use full path)
-                '-f', 'image2',  # Specify image input format
                 '-loop', '1',    # Loop the image
                 '-i', thumbnail_path,  # Input image
                 '-i', audio_path,      # Input audio
                 '-c:v', 'libx264',     # Video codec
-                '-c:a', 'copy',        # Copy audio without re-encoding (faster)
-                '-preset', 'ultrafast', # Fastest encoding
-                '-tune', 'stillimage',  # Optimize for static images
-                '-t', str(int(audio_duration)), # Explicit duration instead of -shortest
-                '-r', '0.5',           # Very low frame rate for ARM64 (0.5 fps)
+                '-c:a', 'aac',         # Use AAC instead of copy for better compatibility
+                '-preset', 'medium',   # Balance between speed and quality
+                '-crf', '23',          # Better quality setting
+                '-r', '25',            # Standard frame rate for better playback
                 '-pix_fmt', 'yuv420p', # Compatible pixel format
-                '-vf', 'scale=1280:720', # Scale to HD
+                '-vf', 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2', # Better scaling with padding
+                '-shortest',           # Stop when shortest stream ends
+                '-movflags', '+faststart', # Enable web streaming
                 output_path
             ]
             
