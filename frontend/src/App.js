@@ -543,19 +543,43 @@ function App() {
   const downloadFile = (fileType, fileId, filename) => {
     if (!fileId) {
       console.error('No file ID available for download');
+      alert('Error: No file ID available for download');
       return;
     }
     
     const downloadUrl = `${BACKEND_URL}/api/download/${fileType}/${fileId}`;
     console.log(`Downloading ${fileType}: ${downloadUrl}`);
+    console.log(`Backend URL: ${BACKEND_URL}`);
+    console.log(`File ID: ${fileId}`);
+    console.log(`Filename: ${filename}`);
     
-    // Create temporary link and trigger download
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.download = filename || `${fileId}.${getFileExtension(fileType)}`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Test if URL is accessible first
+    fetch(downloadUrl, { method: 'HEAD' })
+      .then(response => {
+        console.log('URL test response:', response.status);
+        if (response.ok || response.status === 405) { // 405 = method not allowed but file exists
+          // Create temporary link and trigger download
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = filename || `${fileId}.${getFileExtension(fileType)}`;
+          link.target = '_blank'; // Open in new tab as fallback
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          console.log('Download link clicked');
+        } else {
+          console.error('File not accessible:', response.status);
+          alert(`Error: File not accessible (${response.status})`);
+        }
+      })
+      .catch(error => {
+        console.error('Download error:', error);
+        alert(`Download error: ${error.message}`);
+        
+        // Fallback: try direct window.open
+        console.log('Trying fallback: window.open');
+        window.open(downloadUrl, '_blank');
+      });
   };
 
   const getFileExtension = (fileType) => {
