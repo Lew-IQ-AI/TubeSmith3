@@ -14,7 +14,7 @@ from elevenlabs import ElevenLabs, VoiceSettings
 import aiofiles
 from dotenv import load_dotenv
 import tempfile
-import moviepy.editor as mp
+import moviepy as mp
 import ffmpeg
 from pathlib import Path
 
