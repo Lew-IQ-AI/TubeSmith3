@@ -440,7 +440,6 @@ function App() {
     // Clear any persistent state on component mount
     setVideoProcessingStatus(null);
     setCurrentStep('');
-    setError('');
   }, []);
 
   // Cleanup polling on unmount
