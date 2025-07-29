@@ -10,7 +10,8 @@ from typing import Optional
 from pydantic import BaseModel
 import openai
 import requests
-from elevenlabs import ElevenLabs, VoiceSettings
+from elevenlabs.client import ElevenLabs
+from elevenlabs import VoiceSettings
 import aiofiles
 from dotenv import load_dotenv
 import tempfile
