@@ -69,18 +69,31 @@ function App() {
   const generateVoice = async (scriptId) => {
     try {
       setCurrentStep('Generating AI voice-over...');
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minutes timeout
+      
       const response = await fetch(`${BACKEND_URL}/api/generate-voice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ script_id: scriptId })
+        body: JSON.stringify({ script_id: scriptId }),
+        signal: controller.signal
       });
       
-      if (!response.ok) throw new Error('Voice generation failed');
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Voice generation failed: ${errorData}`);
+      }
       
       const result = await response.json();
       setGeneratedContent(prev => ({ ...prev, audio: result }));
       return result;
     } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Voice generation timed out. Please try again.');
+      }
       console.error('Voice generation failed:', error);
       throw error;
     }
