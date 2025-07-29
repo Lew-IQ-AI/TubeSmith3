@@ -19,7 +19,7 @@ import threading
 import json
 import time
 
-import cv2
+
 import tempfile
 import shutil
 import moviepy as mp
