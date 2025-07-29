@@ -402,17 +402,19 @@ function App() {
 
             {/* Action Buttons */}
             <div className="flex gap-2">
+              {generatedContent.video && (
+                <button
+                  onClick={() => downloadFile('video', generatedContent.video.video_id)}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg text-sm font-semibold"
+                >
+                  🎬 Download Video
+                </button>
+              )}
               <button
                 onClick={() => downloadFile('script', generatedContent.script.script_id)}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-lg text-sm font-semibold"
               >
                 📄 Script
-              </button>
-              <button
-                onClick={() => downloadFile('audio', generatedContent.audio.script_id)}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded-lg text-sm font-semibold"
-              >
-                🎵 Audio
               </button>
               <button
                 onClick={() => downloadFile('thumbnail', generatedContent.thumbnail.thumbnail_id)}
