@@ -323,19 +323,40 @@ function App() {
     const pollStatus = async () => {
       try {
         pollCount++;
+        console.log(`Poll ${pollCount}: Checking status for ${videoId}`);
         
-        const response = await fetch(`${BACKEND_URL}/api/video-status/${videoId}`);
+        const response = await fetch(`${BACKEND_URL}/api/video-status/${videoId}`, {
+          cache: 'no-cache',  // Prevent caching issues
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
         if (response.ok) {
           const status = await response.json();
           console.log(`Poll ${pollCount}: Status=${status.status}, Progress=${status.progress}%`);
           setVideoProcessingStatus(status);
           
-          // Update current step with progress
-          if (status.status === 'processing') {
-            setCurrentStep(`🎬 ${status.message} (${status.progress}%)`);
-          } else if (status.status === 'completed') {
+          // CRITICAL: Always check for completion first
+          if (status.status === 'completed') {
             console.log('✅ Video completion detected!');
             setCurrentStep('✅ Video assembly complete!');
+            setGeneratedContent(prev => ({ 
+              ...prev, 
+              video: {
+                video_id: videoId,
+                duration: status.duration || 60,
+                file_size: status.file_size || 500000,
+                clips_used: status.clips_used || 1,
+                status: 'success'
+              }
+            }));
+            clearInterval(statusPollingInterval);
+            setStatusPollingInterval(null);
+            return; // Exit immediately when completed
+          } else if (status.status === 'processing') {
+            setCurrentStep(`🎬 ${status.message} (${status.progress}%)`);
+          } else if (status.status === 'failed') {
             setGeneratedContent(prev => ({ 
               ...prev, 
               video: {
