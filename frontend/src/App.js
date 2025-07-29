@@ -243,7 +243,13 @@ function App() {
       setCurrentStep('✅ AI video generation complete!');
       
     } catch (error) {
-      setCurrentStep(`❌ Error: ${error.message}`);
+      console.error('Generation error:', error);
+      setCurrentStep(`❌ ${error.message}`);
+      
+      // Clear the error message after 5 seconds to allow retry
+      setTimeout(() => {
+        setCurrentStep('');
+      }, 5000);
     } finally {
       setIsGenerating(false);
     }
