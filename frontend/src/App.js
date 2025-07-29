@@ -733,6 +733,15 @@ function App() {
                       ></div>
                     </div>
                   )}
+                  {/* DEBUG: Force refresh button for stuck videos */}
+                  {videoProcessingStatus?.status === 'processing' && videoProcessingStatus?.progress >= 80 && (
+                    <button
+                      onClick={forceStatusRefresh}
+                      className="mt-2 w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded text-xs"
+                    >
+                      🔄 Force Status Refresh
+                    </button>
+                  )}
                 </div>
               )}
 
