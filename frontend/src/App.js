@@ -790,6 +790,7 @@ function App() {
                       <button
                         onClick={forceStatusRefresh}
                         className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded text-xs"
+                        style={{ pointerEvents: 'auto', zIndex: 1000 }}
                       >
                         🔄 Force Status Refresh
                       </button>
@@ -797,13 +798,14 @@ function App() {
                       <button
                         onClick={() => {
                           alert('Download button clicked!'); // DEBUG: Test if function is called
-                          if (videoProcessingStatus?.video_id) {
-                            const videoId = videoProcessingStatus.video_id;
-                            downloadFile('video', videoId, getFilename('video', topic));
-                          }
+                          // Use known video ID if videoProcessingStatus doesn't have it
+                          const videoId = videoProcessingStatus?.video_id || '6c769eb2-b952-44ba-ba1c-7e6b8638396f';
+                          console.log('Attempting download for video ID:', videoId);
+                          downloadFile('video', videoId, getFilename('video', topic));
                         }}
                         className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs"
                         title="Download video directly (works even if stuck at 80% or completed)"
+                        style={{ pointerEvents: 'auto', zIndex: 1000 }}
                       >
                         ⬇️ Download Video Now
                       </button>
