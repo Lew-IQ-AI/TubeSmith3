@@ -364,35 +364,250 @@ async def generate_youtube_metadata(request: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Metadata generation failed: {str(e)}")
 
+# Video processing status tracking
+video_status = {}
+
+def update_video_status(video_id: str, status: str, progress: int = 0, message: str = "", error: str = ""):
+    """Update video processing status"""
+    video_status[video_id] = {
+        "status": status,  # "processing", "completed", "failed"
+        "progress": progress,  # 0-100
+        "message": message,
+        "error": error,
+        "timestamp": time.time()
+    }
+    
+    # Also save to file for persistence
+    status_file = f"generated_content/status/{video_id}.json"
+    try:
+        with open(status_file, 'w') as f:
+            json.dump(video_status[video_id], f)
+    except Exception as e:
+        print(f"Failed to save status: {e}")
+
+def process_video_background(video_id: str, script_id: str, topic: str):
+    """Background video processing function"""
+    try:
+        print(f"Starting background video processing for {video_id}")
+        update_video_status(video_id, "processing", 5, "Starting video assembly...")
+        
+        # Check required files
+        script_path = f"generated_content/scripts/{script_id}.txt"
+        audio_path = f"generated_content/audio/{script_id}.mp3"
+        
+        if not os.path.exists(script_path) or not os.path.exists(audio_path):
+            update_video_status(video_id, "failed", 0, "", "Required files not found")
+            return
+        
+        # Get stock videos
+        update_video_status(video_id, "processing", 10, "Getting stock videos...")
+        import requests
+        headers = {"Authorization": PEXELS_API_KEY}
+        search_url = f"https://api.pexels.com/videos/search?query={topic}&per_page=5&size=medium"
+        response = requests.get(search_url, headers=headers, timeout=30)
+        
+        if response.status_code != 200:
+            update_video_status(video_id, "failed", 0, "", f"Failed to get stock videos: {response.status_code}")
+            return
+        
+        data = response.json()
+        videos = []
+        for video in data.get('videos', []):
+            video_files = video.get('video_files', [])
+            medium_quality = next((vf for vf in video_files if vf.get('quality') == 'hd'), video_files[0] if video_files else None)
+            if medium_quality:
+                videos.append({
+                    "id": video['id'],
+                    "url": medium_quality['link'],
+                    "duration": video.get('duration', 0)
+                })
+        
+        if not videos:
+            update_video_status(video_id, "failed", 0, "", "No stock videos found")
+            return
+        
+        # Download stock videos
+        update_video_status(video_id, "processing", 25, "Downloading stock videos...")
+        video_clips = []
+        temp_files = []
+        
+        for i, video in enumerate(videos[:3]):  # Use first 3 videos
+            try:
+                print(f"Downloading video {i+1}/3: {video['url']}")
+                video_response = requests.get(video["url"], timeout=60, stream=True)
+                if video_response.status_code == 200:
+                    temp_video_path = f"/tmp/stock_video_{i}_{video_id}.mp4"
+                    with open(temp_video_path, 'wb') as f:
+                        for chunk in video_response.iter_content(chunk_size=8192):
+                            f.write(chunk)
+                    temp_files.append(temp_video_path)
+                    
+                    # Load video clip
+                    clip = VideoFileClip(temp_video_path)
+                    # Trim to reasonable length (max 15 seconds per clip)
+                    if clip.duration > 15:
+                        clip = clip.subclip(0, 15)
+                    video_clips.append(clip)
+                    
+                    update_video_status(video_id, "processing", 25 + (i+1)*15, f"Downloaded video {i+1}/3")
+                    
+            except Exception as e:
+                print(f"Failed to download video {i}: {str(e)}")
+                continue
+        
+        if not video_clips:
+            update_video_status(video_id, "failed", 0, "", "Failed to download any stock videos")
+            return
+        
+        # Process video assembly
+        update_video_status(video_id, "processing", 70, "Assembling video with audio...")
+        
+        # Load audio
+        audio = AudioFileClip(audio_path)
+        audio_duration = audio.duration
+        
+        # Calculate timing for clips
+        clips_needed = len(video_clips)
+        target_duration_per_clip = audio_duration / clips_needed
+        
+        # Adjust video clips to match audio duration
+        adjusted_clips = []
+        for i, clip in enumerate(video_clips):
+            if clip.duration < target_duration_per_clip:
+                # Loop the clip if it's too short
+                loops_needed = int(target_duration_per_clip / clip.duration) + 1
+                looped_clip = concatenate_videoclips([clip] * loops_needed)
+                adjusted_clips.append(looped_clip.subclip(0, target_duration_per_clip))
+            else:
+                # Trim if too long
+                adjusted_clips.append(clip.subclip(0, target_duration_per_clip))
+        
+        update_video_status(video_id, "processing", 80, "Combining video clips...")
+        
+        # Concatenate all video clips
+        final_video = concatenate_videoclips(adjusted_clips)
+        
+        # Add audio to video
+        final_video = final_video.set_audio(audio)
+        
+        # Export final video
+        update_video_status(video_id, "processing", 90, "Exporting final video...")
+        output_path = f"generated_content/videos/{video_id}.mp4"
+        
+        # Export with optimized settings for YouTube
+        final_video.write_videofile(
+            output_path,
+            fps=24,
+            codec='libx264',
+            audio_codec='aac',
+            bitrate='2000k',
+            temp_audiofile=f'/tmp/temp-audio-{video_id}.m4a',
+            remove_temp=True,
+            verbose=False,
+            logger=None
+        )
+        
+        # Clean up
+        for clip in video_clips + adjusted_clips:
+            clip.close()
+        final_video.close()
+        audio.close()
+        
+        # Clean up temp files
+        for temp_file in temp_files:
+            try:
+                os.remove(temp_file)
+            except:
+                pass
+        
+        # Get file info
+        file_size = os.path.getsize(output_path)
+        
+        # Mark as completed
+        update_video_status(video_id, "completed", 100, "Video ready for download!", "")
+        
+        # Update final result
+        video_status[video_id].update({
+            "video_path": output_path,
+            "duration": audio_duration,
+            "file_size": file_size,
+            "clips_used": len(video_clips)
+        })
+        
+        print(f"Video assembly completed successfully: {video_id}")
+        
+    except Exception as e:
+        print(f"Video processing failed: {str(e)}")
+        update_video_status(video_id, "failed", 0, "", str(e))
+        
+        # Clean up on error
+        try:
+            for clip in video_clips:
+                clip.close()
+        except:
+            pass
+        for temp_file in temp_files:
+            try:
+                os.remove(temp_file)
+            except:
+                pass
+
 @app.post("/api/assemble-video")
 async def assemble_video(request: dict):
-    """Assemble final video from components"""
+    """Start background video assembly"""
     try:
-        print(f"Starting video assembly for request: {request}")
         script_id = request.get("script_id")
         topic = request.get("topic", "")
         
         if not script_id:
             raise HTTPException(status_code=400, detail="script_id is required")
         
-        # Check all required files exist
-        script_path = f"generated_content/scripts/{script_id}.txt"
-        audio_path = f"generated_content/audio/{script_id}.mp3"
+        # Generate unique video ID
+        video_id = str(uuid.uuid4())
         
-        print(f"Checking files: {script_path}, {audio_path}")
-        if not os.path.exists(script_path) or not os.path.exists(audio_path):
-            raise HTTPException(status_code=404, detail="Required files not found")
+        # Initialize status
+        update_video_status(video_id, "processing", 0, "Initializing video assembly...")
         
-        # Simple response for now - just return that assembly started
+        # Start background processing
+        thread = threading.Thread(
+            target=process_video_background,
+            args=(video_id, script_id, topic),
+            daemon=True
+        )
+        thread.start()
+        
         return {
-            "video_id": str(uuid.uuid4()),
+            "video_id": video_id,
             "status": "processing",
-            "message": "Video assembly started. This is a simplified version - actual video assembly will be implemented next."
+            "message": "Video assembly started in background"
         }
         
     except Exception as e:
-        print(f"Video assembly error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Video assembly failed: {str(e)}")
+        print(f"Video assembly startup error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to start video assembly: {str(e)}")
+
+@app.get("/api/video-status/{video_id}")
+async def get_video_status(video_id: str):
+    """Get video processing status"""
+    try:
+        # Try to get from memory first
+        if video_id in video_status:
+            return video_status[video_id]
+        
+        # Try to load from file
+        status_file = f"generated_content/status/{video_id}.json"
+        if os.path.exists(status_file):
+            with open(status_file, 'r') as f:
+                status = json.load(f)
+                video_status[video_id] = status  # Cache in memory
+                return status
+        
+        raise HTTPException(status_code=404, detail="Video not found")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get status: {str(e)}")
 
 @app.get("/api/download/{file_type}/{file_id}")
 async def download_file(file_type: str, file_id: str):
