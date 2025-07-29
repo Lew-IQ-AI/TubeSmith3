@@ -275,294 +275,242 @@ function App() {
       {/* Video Preview Modal */}
       {showVideoPreview && isVideoComplete && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-black/60 backdrop-blur-sm rounded-xl p-6 max-w-2xl w-full border border-gray-700">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-white text-xl font-bold">🎬 Your YouTube Video</h2>
+          <div className="bg-black/60 backdrop-blur-sm rounded-xl p-4 max-w-lg w-full border border-gray-700">
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-white text-lg font-bold">🎬 Your YouTube Video</h2>
               <button
                 onClick={() => setShowVideoPreview(false)}
-                className="text-gray-400 hover:text-white text-2xl"
+                className="text-gray-400 hover:text-white text-xl"
               >
                 ✕
               </button>
             </div>
             
-            {/* Video Preview */}
-            <div className="bg-black rounded-lg overflow-hidden mb-4">
+            {/* Video Preview - Show thumbnail directly */}
+            <div className="bg-gray-800 rounded-lg overflow-hidden mb-3">
               <div className="relative">
                 <img 
-                  src={`${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
+                  src={generatedContent.thumbnail.image_url || `${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
                   alt="YouTube Video Thumbnail"
-                  className="w-full h-64 object-cover"
+                  className="w-full h-48 object-cover"
                   onError={(e) => {
-                    console.error('Thumbnail failed to load:', e);
-                    e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23333"/><text x="200" y="150" text-anchor="middle" fill="white" font-size="16">Thumbnail Preview</text></svg>';
+                    console.error('Thumbnail failed to load from:', e.target.src);
+                    e.target.style.display = 'none';
+                    e.target.nextElementSibling.style.display = 'flex';
                   }}
                 />
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                  <div className="bg-red-600/80 rounded-full p-4 hover:bg-red-600 transition-colors cursor-pointer">
-                    <div className="w-0 h-0 border-l-8 border-l-white border-t-6 border-t-transparent border-b-6 border-b-transparent ml-1"></div>
+                <div className="absolute inset-0 bg-black/30 hidden items-center justify-center">
+                  <p className="text-white text-sm">Generated Thumbnail Preview</p>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="bg-red-600/80 rounded-full p-3 hover:bg-red-600 transition-colors">
+                    <div className="w-0 h-0 border-l-6 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1"></div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Audio Player */}
-            <div className="bg-gray-800 rounded-lg p-4 mb-4">
-              <h3 className="text-white text-sm font-semibold mb-2">🎙️ Generated Voice-over</h3>
+            <div className="bg-gray-800 rounded-lg p-3 mb-3">
+              <h3 className="text-white text-sm font-semibold mb-2">🎙️ AI Voice-over</h3>
               <audio 
                 controls 
-                className="w-full"
+                className="w-full h-8"
                 src={`${BACKEND_URL}/generated_content/audio/${generatedContent.audio.script_id}.mp3`}
               >
                 Your browser does not support audio playback.
               </audio>
             </div>
 
-            {/* Video Details */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="bg-gray-800 rounded-lg p-3">
-                <h4 className="text-white text-sm font-semibold mb-1">📝 Script</h4>
-                <p className="text-gray-300 text-xs">{generatedContent.script.word_count} words</p>
-                <button
-                  onClick={() => downloadFile('script', generatedContent.script.script_id)}
-                  className="mt-2 bg-blue-600 hover:bg-blue-700 text-white text-xs py-1 px-2 rounded"
-                >
-                  Download TXT
-                </button>
-              </div>
-              <div className="bg-gray-800 rounded-lg p-3">
-                <h4 className="text-white text-sm font-semibold mb-1">🎥 Videos</h4>
-                <p className="text-gray-300 text-xs">{generatedContent.videos.total_found} HD clips</p>
-                <button
-                  onClick={() => downloadFile('thumbnail', generatedContent.thumbnail.thumbnail_id)}
-                  className="mt-2 bg-purple-600 hover:bg-purple-700 text-white text-xs py-1 px-2 rounded"
-                >
-                  Download PNG
-                </button>
-              </div>
-            </div>
-
             {/* Action Buttons */}
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
-                onClick={() => downloadFile('audio', generatedContent.audio.script_id)}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold"
+                onClick={() => downloadFile('script', generatedContent.script.script_id)}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-lg text-sm font-semibold"
               >
-                📥 Download Audio
+                📄 Script
               </button>
               <button
-                onClick={() => setShowVideoPreview(false)}
-                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-semibold"
+                onClick={() => downloadFile('audio', generatedContent.audio.script_id)}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded-lg text-sm font-semibold"
               >
-                Close Preview
+                🎵 Audio
+              </button>
+              <button
+                onClick={() => downloadFile('thumbnail', generatedContent.thumbnail.thumbnail_id)}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-3 rounded-lg text-sm font-semibold"
+              >
+                🖼️ Image
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Header - Extra Compact */}
-      <div className="container mx-auto px-4 py-2">
-        <div className="text-center mb-4">
-          <h1 className="text-3xl font-bold text-white mb-1 bg-gradient-to-r from-pink-400 to-violet-400 bg-clip-text text-transparent">
+      {/* Main Content - Ultra Compact */}
+      <div className="container mx-auto px-4 py-1">
+        {/* Header - Minimal */}
+        <div className="text-center mb-2">
+          <h1 className="text-2xl font-bold text-white mb-1 bg-gradient-to-r from-pink-400 to-violet-400 bg-clip-text text-transparent">
             🔨 TubeSmith
           </h1>
-          <p className="text-base text-gray-300">
-            1-Click Content Creation
-          </p>
+          <p className="text-sm text-gray-300">1-Click Content Creation</p>
         </div>
 
-        <div className="max-w-2xl mx-auto">
-          {/* Main Input Section - Ultra Compact */}
-          <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4 mb-4 border border-gray-700">
-            {/* Topic Input */}
-            <div className="mb-3">
-              <label className="block text-white text-sm font-semibold mb-1">
-                📝 Enter Your Video Topic
-              </label>
+        <div className="max-w-xl mx-auto">
+          {/* Input Section - Minimal */}
+          <div className="bg-black/30 backdrop-blur-sm rounded-lg p-3 mb-2 border border-gray-700">
+            <div className="mb-2">
               <input
                 type="text"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                placeholder="e.g., 'AI revolution', 'space exploration'..."
-                className="w-full p-2 text-sm rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-purple-500 focus:outline-none"
+                placeholder="Enter video topic (e.g., 'AI revolution')"
+                className="w-full p-2 text-sm rounded-md bg-gray-800 text-white border border-gray-600 focus:border-purple-500 focus:outline-none"
                 disabled={isGenerating}
               />
             </div>
-
-            {/* Video Length Selector */}
-            <div className="mb-3">
-              <label className="block text-white text-sm font-semibold mb-1">
-                ⏱️ Video Length (minutes)
-              </label>
+            <div className="mb-2">
               <select
                 value={videoLength}
                 onChange={(e) => setVideoLength(parseInt(e.target.value))}
-                className="w-full p-2 text-sm rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-purple-500 focus:outline-none appearance-none"
+                className="w-full p-2 text-sm rounded-md bg-gray-800 text-white border border-gray-600 focus:border-purple-500 focus:outline-none"
                 disabled={isGenerating}
               >
-                <option value={1}>1 (~150 words needed)</option>
-                <option value={3}>3 (~450 words needed)</option>
-                <option value={5}>5 (~750 words needed)</option>
-                <option value={10}>10 (~1500 words needed)</option>
-                <option value={15}>15 (~2250 words needed)</option>
+                <option value={1}>1 minute (~150 words)</option>
+                <option value={3}>3 minutes (~450 words)</option>
+                <option value={5}>5 minutes (~750 words)</option>
+                <option value={10}>10 minutes (~1500 words)</option>
               </select>
             </div>
-
-            {/* Generate Button */}
             <button
               onClick={generateFullVideo}
               disabled={isGenerating || !topic.trim()}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 px-4 rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 px-4 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
-              {isGenerating ? '🚀 Generating...' : `🎬 Create ${videoLength}-Min AI Video`}
+              {isGenerating ? '🚀 Generating...' : `🎬 Create ${videoLength}-Min Video`}
             </button>
           </div>
 
-          {/* Progress Display - Always Visible */}
+          {/* Progress - Always Visible */}
           {currentStep && (
-            <div className="bg-blue-900/30 backdrop-blur-sm rounded-xl p-3 mb-4 border border-blue-700">
-              <div className="text-center">
-                <p className="text-blue-300 text-sm font-semibold">{currentStep}</p>
-                {isGenerating && (
-                  <div className="mt-1 w-full bg-gray-700 rounded-full h-1">
-                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1 rounded-full animate-pulse"></div>
-                  </div>
-                )}
-              </div>
+            <div className="bg-blue-900/30 backdrop-blur-sm rounded-lg p-2 mb-2 border border-blue-700">
+              <p className="text-blue-300 text-sm font-semibold text-center">{currentStep}</p>
+              {isGenerating && (
+                <div className="mt-1 w-full bg-gray-700 rounded-full h-1">
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1 rounded-full animate-pulse"></div>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Generated Content Cards - 2x2 Grid - Ultra Compact */}
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            
-            {/* Script Card */}
-            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-3 border border-gray-700 ${generatedContent.script ? '' : 'opacity-50'}`}>
-              <h3 className="text-white text-sm font-semibold mb-1 flex items-center justify-center">
+          {/* Content Cards - Minimal 2x2 */}
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <div className={`bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700 text-center ${generatedContent.script ? '' : 'opacity-50'}`}>
+              <div className="text-xs font-semibold text-white mb-1">
                 {generatedContent.script ? '✅' : '⏳'} Script
-              </h3>
+              </div>
               {generatedContent.script ? (
-                <>
-                  <p className="text-green-300 text-xs text-center mb-1">{generatedContent.script.word_count} words</p>
-                  <p className="text-green-200 text-xs text-center">✓ Good length</p>
-                </>
+                <div className="text-xs text-green-300">{generatedContent.script.word_count} words</div>
               ) : (
-                <p className="text-gray-400 text-xs text-center">Waiting...</p>
+                <div className="text-xs text-gray-400">Waiting...</div>
               )}
             </div>
 
-            {/* Voice Card */}
-            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-3 border border-gray-700 ${generatedContent.audio ? '' : 'opacity-50'}`}>
-              <h3 className="text-white text-sm font-semibold mb-1 flex items-center justify-center">
+            <div className={`bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700 text-center ${generatedContent.audio ? '' : 'opacity-50'}`}>
+              <div className="text-xs font-semibold text-white mb-1">
                 {generatedContent.audio ? '✅' : '⏳'} Voice
-              </h3>
+              </div>
               {generatedContent.audio ? (
-                <>
-                  <p className="text-green-300 text-xs text-center mb-1">ElevenLabs AI</p>
-                  <p className="text-green-200 text-xs text-center">Click for MP3</p>
-                </>
+                <div className="text-xs text-green-300">ElevenLabs AI</div>
               ) : (
-                <p className="text-gray-400 text-xs text-center">Waiting...</p>
+                <div className="text-xs text-gray-400">Waiting...</div>
               )}
             </div>
 
-            {/* Thumbnail Card */}
-            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-3 border border-gray-700 ${generatedContent.thumbnail ? '' : 'opacity-50'}`}>
-              <h3 className="text-white text-sm font-semibold mb-1 flex items-center justify-center">
+            <div className={`bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700 text-center ${generatedContent.thumbnail ? '' : 'opacity-50'}`}>
+              <div className="text-xs font-semibold text-white mb-1">
                 {generatedContent.thumbnail ? '✅' : '⏳'} Thumbnail
-              </h3>
+              </div>
               {generatedContent.thumbnail ? (
-                <>
-                  <div className="mb-1">
-                    <img 
-                      src={`${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
-                      alt="Generated thumbnail"
-                      className="w-full h-12 object-cover rounded mx-auto"
-                    />
-                  </div>
-                  <p className="text-green-300 text-xs text-center mb-1">DALL-E 3</p>
-                  <p className="text-green-200 text-xs text-center">Click for PNG</p>
-                </>
+                <div>
+                  <img 
+                    src={generatedContent.thumbnail.image_url || `${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
+                    alt="Thumbnail"
+                    className="w-full h-8 object-cover rounded mb-1"
+                  />
+                  <div className="text-xs text-green-300">DALL-E 3</div>
+                </div>
               ) : (
-                <p className="text-gray-400 text-xs text-center">Waiting...</p>
+                <div className="text-xs text-gray-400">Waiting...</div>
               )}
             </div>
 
-            {/* Videos Card */}
-            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-3 border border-gray-700 ${generatedContent.videos ? '' : 'opacity-50'}`}>
-              <h3 className="text-white text-sm font-semibold mb-1 flex items-center justify-center">
+            <div className={`bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700 text-center ${generatedContent.videos ? '' : 'opacity-50'}`}>
+              <div className="text-xs font-semibold text-white mb-1">
                 {generatedContent.videos ? '✅' : '⏳'} Videos
-              </h3>
+              </div>
               {generatedContent.videos ? (
-                <>
-                  <p className="text-green-300 text-xs text-center mb-1">{generatedContent.videos.total_found} clips</p>
-                  <p className="text-green-200 text-xs text-center">HD quality</p>
-                </>
+                <div className="text-xs text-green-300">{generatedContent.videos.total_found} clips</div>
               ) : (
-                <p className="text-gray-400 text-xs text-center">Waiting...</p>
+                <div className="text-xs text-gray-400">Waiting...</div>
               )}
             </div>
           </div>
 
-          {/* Completion with Clickable Thumbnail */}
+          {/* Final Video Display */}
           {isVideoComplete && (
-            <div className="bg-green-900/30 backdrop-blur-sm rounded-xl p-4 border border-green-700 mb-3">
-              <div className="text-center">
-                <p className="text-green-300 text-lg font-semibold mb-3">✅ YouTube Video Complete!</p>
-                
-                {/* Large Clickable Thumbnail */}
-                <div 
-                  className="relative cursor-pointer group mx-auto max-w-sm"
-                  onClick={handleThumbnailClick}
-                >
-                  <img 
-                    src={`${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
-                    alt="Generated YouTube thumbnail"
-                    className="w-full h-32 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform"
-                  />
-                  <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center group-hover:bg-black/30 transition-colors">
-                    <div className="bg-red-600 rounded-full p-3 group-hover:scale-110 transition-transform">
-                      <div className="w-0 h-0 border-l-6 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1"></div>
-                    </div>
+            <div className="bg-green-900/30 backdrop-blur-sm rounded-lg p-3 border border-green-700 mb-2">
+              <p className="text-green-300 text-sm font-semibold text-center mb-2">✅ Video Ready!</p>
+              <div 
+                className="relative cursor-pointer group"
+                onClick={handleThumbnailClick}
+              >
+                <img 
+                  src={generatedContent.thumbnail.image_url || `${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
+                  alt="YouTube Video"
+                  className="w-full h-24 object-cover rounded-md group-hover:scale-105 transition-transform"
+                  onError={(e) => {
+                    console.error('Main thumbnail failed to load');
+                    e.target.style.background = '#333';
+                    e.target.alt = 'Thumbnail Loading...';
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/20 rounded-md flex items-center justify-center group-hover:bg-black/30 transition-colors">
+                  <div className="bg-red-600 rounded-full p-2 group-hover:scale-110 transition-transform">
+                    <div className="w-0 h-0 border-l-4 border-l-white border-t-3 border-t-transparent border-b-3 border-b-transparent ml-1"></div>
                   </div>
                 </div>
-                
-                <p className="text-green-200 text-sm mt-3">Click to preview your video!</p>
               </div>
+              <p className="text-green-200 text-xs text-center mt-2">Click to preview!</p>
             </div>
           )}
 
-          {/* Integration Test Button - Compact */}
-          <div className="text-center mb-3">
+          {/* Integration Test */}
+          <div className="text-center mb-2">
             <button
               onClick={testIntegrations}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-lg transition-all text-xs"
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-md transition-all text-xs"
             >
-              🔧 Test AI Integrations
+              🔧 Test Integrations
             </button>
           </div>
 
-          {/* Test Results Display - Compact */}
+          {/* Test Results */}
           {testResults && (
-            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-3 border border-gray-700">
-              <h3 className="text-white text-sm font-semibold mb-2">🧪 Integration Test Results</h3>
-              <div className="grid grid-cols-3 gap-2">
+            <div className="bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700">
+              <div className="grid grid-cols-3 gap-1">
                 {Object.entries(testResults).map(([service, result]) => (
-                  <div key={service} className={`p-2 rounded-lg ${result.status === 'success' ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
-                    <h4 className="font-semibold text-white capitalize text-xs">{service}</h4>
-                    <p className={`text-xs ${result.status === 'success' ? 'text-green-300' : 'text-red-300'}`}>
-                      {result.status === 'success' ? '✅ Working' : '❌ Error'}
-                    </p>
+                  <div key={service} className={`p-1 rounded text-center ${result.status === 'success' ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
+                    <div className="text-white text-xs font-semibold capitalize">{service}</div>
+                    <div className={`text-xs ${result.status === 'success' ? 'text-green-300' : 'text-red-300'}`}>
+                      {result.status === 'success' ? '✅' : '❌'}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           )}
-        </div>
-
-        {/* Footer - Ultra Compact */}
-        <div className="text-center mt-2 text-gray-400">
-          <p className="text-xs">🚀 Powered by OpenAI GPT-4, ElevenLabs, DALL-E & Pexels</p>
         </div>
       </div>
     </div>
