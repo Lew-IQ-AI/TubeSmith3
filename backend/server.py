@@ -457,6 +457,7 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             print(f"Starting FFmpeg with command: {' '.join(ffmpeg_cmd)}")
             print(f"Working directory: {os.getcwd()}")
             print(f"FFmpeg path exists: {os.path.exists('/usr/bin/ffmpeg')}")
+            import time
             start_time = time.time()
             
             # Run FFmpeg with extended timeout for ARM64 architecture (needs ~13 minutes for 78s audio)
