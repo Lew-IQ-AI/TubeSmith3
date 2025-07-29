@@ -429,7 +429,7 @@ def process_video_background(video_id: str, script_id: str, topic: str):
         output_path = f"generated_content/videos/{video_id}.mp4"
         
         try:
-            # Create video using simple FFmpeg command
+            # Create video using optimized FFmpeg command
             ffmpeg_cmd = [
                 'ffmpeg', '-y',  # Overwrite output file
                 '-loop', '1',    # Loop the image
@@ -437,10 +437,13 @@ def process_video_background(video_id: str, script_id: str, topic: str):
                 '-i', audio_path,      # Input audio
                 '-c:v', 'libx264',     # Video codec
                 '-c:a', 'aac',         # Audio codec
+                '-preset', 'ultrafast', # Fast encoding
+                '-crf', '28',          # Reasonable quality/size balance
                 '-shortest',           # Stop when shortest stream ends
                 '-r', '30',            # Frame rate
-                '-vf', 'scale=1280:720',  # Scale to HD
-                '-t', str(min(audio_duration, 300)),  # Max 5 minutes
+                '-vf', 'scale=1280:720', # Scale to HD
+                '-t', str(min(audio_duration + 1, 300)),  # Max 5 minutes + 1 sec buffer
+                '-movflags', '+faststart', # Enable streaming
                 output_path
             ]
             
