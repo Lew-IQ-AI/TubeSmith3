@@ -282,8 +282,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Project reopened and services restarted"
-    - "All dependencies installed and updated"
+    - "TIMEOUT ISSUES RESOLVED - Script generation tested and working"
+    - "Frontend UI workflow fully functional"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
