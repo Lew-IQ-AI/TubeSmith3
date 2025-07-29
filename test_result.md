@@ -131,6 +131,9 @@ backend:
       - working: true
         agent: "main"
         comment: "ElevenLabs text-to-speech integration for voice synthesis - working with API key configured"
+      - working: true
+        agent: "testing"
+        comment: "Minor: ElevenLabs integration test shows API key permission warning for voices_read, but core text-to-speech functionality works perfectly. Successfully generated audio file from script. Voice generation endpoint fully functional."
 
   - task: "AI Thumbnail Generation API"
     implemented: true
