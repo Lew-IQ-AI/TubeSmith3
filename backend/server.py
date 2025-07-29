@@ -255,14 +255,17 @@ async def generate_thumbnail(request: dict):
         raise HTTPException(status_code=500, detail=f"Thumbnail generation failed: {str(e)}")
 
 @app.post("/api/get-stock-videos")
-async def get_stock_videos(topic: str, count: int = 10):
+async def get_stock_videos(request: dict):
     """Get stock videos from Pexels"""
     try:
+        topic = request.get("topic", "")
+        count = request.get("count", 10)
+        
         headers = {"Authorization": PEXELS_API_KEY}
         
         # Search for videos related to the topic
         search_url = f"https://api.pexels.com/videos/search?query={topic}&per_page={count}&size=medium"
-        response = requests.get(search_url, headers=headers)
+        response = requests.get(search_url, headers=headers, timeout=30)
         
         if response.status_code != 200:
             raise HTTPException(status_code=500, detail=f"Pexels API error: {response.status_code}")
@@ -286,6 +289,8 @@ async def get_stock_videos(topic: str, count: int = 10):
         
         return {"videos": videos, "total_found": len(videos)}
         
+    except requests.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Network error accessing Pexels: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Stock video search failed: {str(e)}")
 
