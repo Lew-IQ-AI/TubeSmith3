@@ -431,9 +431,10 @@ def process_video_background(video_id: str, script_id: str, topic: str):
         output_path = f"generated_content/videos/{video_id}.mp4"
         
         try:
-            # Create video using highly optimized FFmpeg command for static image + audio
+            # Create video using ARM64-optimized FFmpeg command for static image + audio
             ffmpeg_cmd = [
                 'ffmpeg', '-y',  # Overwrite output file
+                '-f', 'image2',  # Specify image input format
                 '-loop', '1',    # Loop the image
                 '-i', thumbnail_path,  # Input image
                 '-i', audio_path,      # Input audio
@@ -441,11 +442,10 @@ def process_video_background(video_id: str, script_id: str, topic: str):
                 '-c:a', 'copy',        # Copy audio without re-encoding (faster)
                 '-preset', 'ultrafast', # Fastest encoding
                 '-tune', 'stillimage',  # Optimize for static images
-                '-shortest',           # Stop when shortest stream ends
-                '-r', '1',             # Very low frame rate for static image (1 fps)
+                '-t', str(int(audio_duration)), # Explicit duration instead of -shortest
+                '-r', '0.5',           # Very low frame rate for ARM64 (0.5 fps)
                 '-pix_fmt', 'yuv420p', # Compatible pixel format
                 '-vf', 'scale=1280:720', # Scale to HD
-                '-avoid_negative_ts', 'make_zero', # Fix timestamp issues
                 output_path
             ]
             
