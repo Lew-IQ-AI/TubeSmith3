@@ -31,6 +31,11 @@ load_dotenv()
 
 app = FastAPI()
 
+# Startup event to clear any cached error states
+@app.on_event("startup")
+async def startup_event():
+    clear_video_status()
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
