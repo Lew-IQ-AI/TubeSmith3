@@ -541,9 +541,16 @@ function App() {
               {currentStep && (
                 <div className="bg-blue-900/30 backdrop-blur-sm rounded-lg p-2 border border-blue-700">
                   <p className="text-blue-300 text-sm font-semibold text-center">{currentStep}</p>
-                  {isGenerating && (
+                  {(isGenerating || videoProcessingStatus?.status === 'processing') && (
                     <div className="mt-1 w-full bg-gray-700 rounded-full h-1">
-                      <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1 rounded-full animate-pulse"></div>
+                      <div 
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 h-1 rounded-full transition-all duration-300"
+                        style={{ 
+                          width: videoProcessingStatus?.status === 'processing' 
+                            ? `${videoProcessingStatus.progress}%` 
+                            : '50%' 
+                        }}
+                      ></div>
                     </div>
                   )}
                 </div>
