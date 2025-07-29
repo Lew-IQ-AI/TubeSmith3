@@ -323,53 +323,81 @@ function App() {
               </button>
             </div>
             
-            {/* Video Preview - Show thumbnail directly */}
+            {/* Video Preview - Show actual assembled video */}
             <div className="bg-gray-800 rounded-lg overflow-hidden mb-3">
               <div className="relative">
-                <img 
-                  src={generatedContent.thumbnail.image_url || `${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
-                  alt="YouTube Video Thumbnail"
-                  className="w-full h-48 object-cover"
-                  onError={(e) => {
-                    console.error('Thumbnail failed to load from:', e.target.src);
-                    e.target.style.display = 'none';
-                    e.target.nextElementSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="absolute inset-0 bg-black/30 hidden items-center justify-center">
-                  <p className="text-white text-sm">Generated Thumbnail Preview</p>
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-red-600/80 rounded-full p-3 hover:bg-red-600 transition-colors">
-                    <div className="w-0 h-0 border-l-6 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1"></div>
-                  </div>
-                </div>
+                {generatedContent.video ? (
+                  <video 
+                    controls
+                    className="w-full h-48 object-cover"
+                    poster={generatedContent.thumbnail.image_url || `${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
+                  >
+                    <source 
+                      src={`${BACKEND_URL}/api/download/video/${generatedContent.video.video_id}`}
+                      type="video/mp4"
+                    />
+                    Your browser does not support video playback.
+                  </video>
+                ) : (
+                  <>
+                    <img 
+                      src={generatedContent.thumbnail.image_url || `${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
+                      alt="YouTube Video Thumbnail"
+                      className="w-full h-48 object-cover"
+                      onError={(e) => {
+                        console.error('Thumbnail failed to load from:', e.target.src);
+                        e.target.style.display = 'none';
+                        e.target.nextElementSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black/30 hidden items-center justify-center">
+                      <p className="text-white text-sm">Generated Thumbnail Preview</p>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="bg-red-600/80 rounded-full p-3 hover:bg-red-600 transition-colors">
+                        <div className="w-0 h-0 border-l-6 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1"></div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
-            {/* Audio Player */}
+            {/* Video Details */}
             <div className="bg-gray-800 rounded-lg p-3 mb-3">
-              <h3 className="text-white text-sm font-semibold mb-2">🎙️ AI Voice-over</h3>
-              <audio 
-                controls 
-                className="w-full h-8"
-                preload="metadata"
-                onError={(e) => {
-                  console.error('Audio failed to load:', e.target.src);
-                }}
-                onLoadedMetadata={(e) => {
-                  console.log('Audio loaded successfully, duration:', e.target.duration);
-                }}
-              >
-                <source 
-                  src={`${BACKEND_URL}/api/download/audio/${generatedContent.audio.script_id}`} 
-                  type="audio/mpeg" 
-                />
-                Your browser does not support audio playback.
-              </audio>
-              <p className="text-xs text-gray-400 mt-1">
-                Audio ID: {generatedContent.audio.script_id}
-              </p>
+              <div className="grid grid-cols-2 gap-4 text-xs">
+                <div>
+                  <span className="text-gray-400">Duration:</span>
+                  <span className="text-white ml-2">
+                    {generatedContent.video ? 
+                      `${Math.round(generatedContent.video.duration)}s` : 
+                      'Processing...'
+                    }
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-400">Clips Used:</span>
+                  <span className="text-white ml-2">
+                    {generatedContent.video ? 
+                      generatedContent.video.clips_used : 
+                      generatedContent.videos?.total_found || 0
+                    }
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-400">Words:</span>
+                  <span className="text-white ml-2">{generatedContent.script?.word_count || 0}</span>
+                </div>
+                <div>
+                  <span className="text-gray-400">Size:</span>
+                  <span className="text-white ml-2">
+                    {generatedContent.video ? 
+                      `${(generatedContent.video.file_size / 1024 / 1024).toFixed(1)}MB` : 
+                      'Processing...'
+                    }
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Action Buttons */}
