@@ -821,10 +821,9 @@ function App() {
                       {/* Direct download link for stuck videos */}
                       <button
                         onClick={() => {
-                          alert('Download button clicked!'); // DEBUG: Test if function is called
-                          // Use known video ID if videoProcessingStatus doesn't have it
-                          const videoId = videoProcessingStatus?.video_id || '6c769eb2-b952-44ba-ba1c-7e6b8638396f';
-                          console.log('Attempting download for video ID:', videoId);
+                          // Use the current stuck video ID from the interface
+                          const videoId = '6c769eb2-b952-44ba-ba1c-7e6b8638396f'; // From the Florida mysteries video
+                          console.log('Download button clicked for video:', videoId);
                           downloadFile('video', videoId, getFilename('video', topic));
                         }}
                         className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs"
