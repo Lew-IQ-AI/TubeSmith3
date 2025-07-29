@@ -512,8 +512,10 @@ def process_video_background(video_id: str, script_id: str, topic: str):
         print(f"Video creation completed successfully: {video_id}, size: {file_size} bytes, duration: {audio_duration}s")
         
     except Exception as e:
-        print(f"Video processing failed: {str(e)}")
-        update_video_status(video_id, "failed", 0, "", str(e))
+        print(f"Video processing failed with exception: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        update_video_status(video_id, "failed", 0, "", f"Processing error: {str(e)}")
 
 @app.post("/api/assemble-video")
 async def assemble_video(request: dict):
