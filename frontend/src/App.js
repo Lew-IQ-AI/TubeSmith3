@@ -782,8 +782,9 @@ function App() {
                       ></div>
                     </div>
                   )}
-                  {/* DEBUG: Force refresh button for stuck videos */}
-                  {videoProcessingStatus?.status === 'processing' && videoProcessingStatus?.progress >= 80 && (
+                  {/* DEBUG: Force refresh button for stuck videos OR completed videos with frontend sync issues */}
+                  {((videoProcessingStatus?.status === 'processing' && videoProcessingStatus?.progress >= 80) || 
+                    (videoProcessingStatus?.status === 'completed' && !generatedContent.video)) && (
                     <div className="mt-2 space-y-1">
                       <button
                         onClick={forceStatusRefresh}
@@ -800,9 +801,9 @@ function App() {
                           }
                         }}
                         className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs"
-                        title="Download video directly (works even if stuck at 80%)"
+                        title="Download video directly (works even if stuck at 80% or completed)"
                       >
-                        ⬇️ Download Video Anyway
+                        ⬇️ Download Video Now
                       </button>
                     </div>
                   )}
