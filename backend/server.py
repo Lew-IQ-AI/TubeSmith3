@@ -114,27 +114,26 @@ async def generate_script(request: VideoRequest):
         Create a compelling, engaging YouTube video script about "{request.topic}" that will be approximately {request.duration_minutes} minutes long.
         
         Requirements:
-        - 1,500-2,000 words
+        - Write a script for exactly {request.duration_minutes} minutes of video content
         - Include a strong hook in the first 15 seconds
         - Use storytelling techniques to maintain engagement
-        - Include chapter markers with suggested timestamps
-        - Write in a conversational, engaging tone
         - Add dramatic pauses and emphasis markers
+        - Write in a conversational, engaging tone
         - Include call-to-action at the end
         
         Format the script with:
-        [TIMESTAMP: 0:00] for chapter markers
         [PAUSE] for dramatic pauses
         [EMPHASIS] around key phrases
         
-        Script for: {request.topic}
+        Keep it focused and engaging for: {request.topic}
         """
         
         response = openai_client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",  # Using faster model for better response time
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=2500,
-            temperature=0.7
+            max_tokens=1500,  # Reduced from 2500 for faster response
+            temperature=0.7,
+            timeout=60  # 1 minute timeout
         )
         
         script_content = response.choices[0].message.content
@@ -152,6 +151,10 @@ async def generate_script(request: VideoRequest):
             "file_path": script_path
         }
         
+    except openai.APITimeoutError:
+        raise HTTPException(status_code=408, detail="Script generation timed out. Please try again with a shorter duration or simpler topic.")
+    except openai.APIError as e:
+        raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Script generation failed: {str(e)}")
 
