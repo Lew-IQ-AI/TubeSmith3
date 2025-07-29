@@ -120,6 +120,21 @@ backend:
         agent: "testing"
         comment: "Tested script generation with 'space exploration' topic. Generated 670-word script in 25.85s. Timeout issues resolved - well under 1 minute completion time. Using gpt-4o-mini model with 60s timeout and 1500 max tokens for optimal performance."
 
+  - task: "Video Assembly & MP4 Creation"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Background video processing to combine thumbnail + audio into MP4 using FFmpeg - was failing due to missing FFmpeg installation"
+      - working: true
+        agent: "main"
+        comment: "FIXED: Installed FFmpeg system-wide, increased timeout to 300s, optimized encoding settings (ultrafast preset, CRF 28), improved status recovery for failed/processing states. Video files are now being created successfully."
+
   - task: "AI Voice Generation API"
     implemented: true
     working: true
