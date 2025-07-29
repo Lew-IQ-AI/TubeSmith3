@@ -360,6 +360,140 @@ async def generate_youtube_metadata(request: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Metadata generation failed: {str(e)}")
 
+@app.post("/api/assemble-video")
+async def assemble_video(request: dict):
+    """Assemble final video from components"""
+    try:
+        script_id = request.get("script_id")
+        topic = request.get("topic", "")
+        
+        if not script_id:
+            raise HTTPException(status_code=400, detail="script_id is required")
+        
+        # Check all required files exist
+        script_path = f"generated_content/scripts/{script_id}.txt"
+        audio_path = f"generated_content/audio/{script_id}.mp3"
+        
+        if not os.path.exists(script_path) or not os.path.exists(audio_path):
+            raise HTTPException(status_code=404, detail="Required files not found")
+        
+        # Get stock videos for the topic
+        videos_response = await get_stock_videos({"topic": topic, "count": 5})
+        if not videos_response.get("videos"):
+            raise HTTPException(status_code=404, detail="No stock videos found")
+        
+        video_clips = []
+        temp_files = []
+        
+        try:
+            # Download stock videos
+            for i, video in enumerate(videos_response["videos"][:3]):  # Use first 3 videos
+                try:
+                    video_response = requests.get(video["url"], timeout=30)
+                    if video_response.status_code == 200:
+                        temp_video_path = f"/tmp/stock_video_{i}_{script_id}.mp4"
+                        with open(temp_video_path, 'wb') as f:
+                            f.write(video_response.content)
+                        temp_files.append(temp_video_path)
+                        
+                        # Load video clip
+                        clip = VideoFileClip(temp_video_path)
+                        # Trim to reasonable length (max 10 seconds per clip)
+                        if clip.duration > 10:
+                            clip = clip.subclip(0, 10)
+                        video_clips.append(clip)
+                        
+                except Exception as e:
+                    print(f"Failed to download video {i}: {str(e)}")
+                    continue
+            
+            if not video_clips:
+                raise HTTPException(status_code=500, detail="Failed to download any stock videos")
+            
+            # Load audio
+            audio = AudioFileClip(audio_path)
+            audio_duration = audio.duration
+            
+            # Calculate how long each video clip should be
+            clips_needed = len(video_clips)
+            target_duration_per_clip = audio_duration / clips_needed
+            
+            # Adjust video clips to match audio duration
+            adjusted_clips = []
+            for clip in video_clips:
+                if clip.duration < target_duration_per_clip:
+                    # Loop the clip if it's too short
+                    loops_needed = int(target_duration_per_clip / clip.duration) + 1
+                    looped_clip = concatenate_videoclips([clip] * loops_needed)
+                    adjusted_clips.append(looped_clip.subclip(0, target_duration_per_clip))
+                else:
+                    # Trim if too long
+                    adjusted_clips.append(clip.subclip(0, target_duration_per_clip))
+            
+            # Concatenate all video clips
+            final_video = concatenate_videoclips(adjusted_clips)
+            
+            # Add audio to video
+            final_video = final_video.set_audio(audio)
+            
+            # Export final video
+            video_id = str(uuid.uuid4())
+            output_path = f"generated_content/videos/{video_id}.mp4"
+            
+            # Export with optimized settings for YouTube
+            final_video.write_videofile(
+                output_path,
+                fps=24,
+                codec='libx264',
+                audio_codec='aac',
+                temp_audiofile='/tmp/temp-audio.m4a',
+                remove_temp=True,
+                verbose=False,
+                logger=None
+            )
+            
+            # Clean up
+            for clip in video_clips + adjusted_clips:
+                clip.close()
+            final_video.close()
+            audio.close()
+            
+            # Clean up temp files
+            for temp_file in temp_files:
+                try:
+                    os.remove(temp_file)
+                except:
+                    pass
+            
+            # Get file size
+            file_size = os.path.getsize(output_path)
+            
+            return {
+                "video_id": video_id,
+                "video_path": output_path,
+                "duration": audio_duration,
+                "file_size": file_size,
+                "clips_used": len(video_clips),
+                "status": "success"
+            }
+            
+        except Exception as e:
+            # Clean up on error
+            for clip in video_clips:
+                try:
+                    clip.close()
+                except:
+                    pass
+            for temp_file in temp_files:
+                try:
+                    os.remove(temp_file)
+                except:
+                    pass
+            raise e
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Video assembly failed: {str(e)}")
+
 @app.get("/api/download/{file_type}/{file_id}")
 async def download_file(file_type: str, file_id: str):
     """Download generated files"""
