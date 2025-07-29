@@ -454,8 +454,8 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             print(f"Starting FFmpeg with command: {' '.join(ffmpeg_cmd)}")
             start_time = time.time()
             
-            # Run FFmpeg with reasonable timeout for static image + audio (should complete in under 30 seconds)
-            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=60)
+            # Run FFmpeg with extended timeout for ARM64 architecture (processes slower than x86)
+            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=240)
             
             end_time = time.time()
             processing_time = end_time - start_time
