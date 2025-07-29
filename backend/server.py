@@ -554,10 +554,24 @@ async def download_file(file_type: str, file_id: str):
         if not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="File not found")
         
+        # For video files, set appropriate media type
+        if file_type == "video":
+            media_type = "video/mp4"
+            filename = f"{file_id}.mp4"
+        elif file_type == "audio":
+            media_type = "audio/mpeg"
+            filename = f"{file_id}.mp3"
+        elif file_type == "thumbnail":
+            media_type = "image/png"
+            filename = f"{file_id}.png"
+        else:
+            media_type = "text/plain"
+            filename = f"{file_id}.txt"
+        
         return FileResponse(
             path=file_path,
-            filename=f"{file_id}.{file_type}",
-            media_type='application/octet-stream'
+            filename=filename,
+            media_type=media_type
         )
         
     except Exception as e:
