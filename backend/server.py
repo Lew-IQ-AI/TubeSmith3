@@ -110,11 +110,14 @@ async def test_ai_integrations():
 async def generate_script(request: VideoRequest):
     """Generate a YouTube video script using OpenAI GPT-4"""
     try:
+        # Calculate word target based on duration (approximately 150 words per minute)
+        word_target = max(150, request.duration_minutes * 150)
+        
         prompt = f"""
-        Create a compelling, engaging YouTube video script about "{request.topic}" that will be approximately {request.duration_minutes} minutes long.
+        Create a compelling, engaging YouTube video script about "{request.topic}" that will be exactly {request.duration_minutes} minutes long.
         
         Requirements:
-        - Write a script for exactly {request.duration_minutes} minutes of video content
+        - Write approximately {word_target} words ({request.duration_minutes} minutes of content)
         - Include a strong hook in the first 15 seconds
         - Use storytelling techniques to maintain engagement
         - Add dramatic pauses and emphasis markers
@@ -125,15 +128,21 @@ async def generate_script(request: VideoRequest):
         [PAUSE] for dramatic pauses
         [EMPHASIS] around key phrases
         
-        Keep it focused and engaging for: {request.topic}
+        Topic: {request.topic}
+        Duration: {request.duration_minutes} minutes
         """
         
+        # Use different models based on content length for better performance
+        model = "gpt-4o-mini" if request.duration_minutes <= 5 else "gpt-4o"
+        max_tokens = min(4000, word_target + 500)  # Dynamic token limit
+        timeout = min(180, 30 + (request.duration_minutes * 10))  # Dynamic timeout
+        
         response = openai_client.chat.completions.create(
-            model="gpt-4o-mini",  # Using faster model for better response time
+            model=model,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=1500,  # Reduced from 2500 for faster response
+            max_tokens=max_tokens,
             temperature=0.7,
-            timeout=60  # 1 minute timeout
+            timeout=timeout
         )
         
         script_content = response.choices[0].message.content
@@ -148,11 +157,12 @@ async def generate_script(request: VideoRequest):
             "script_id": script_id,
             "content": script_content,
             "word_count": len(script_content.split()),
+            "estimated_duration": request.duration_minutes,
             "file_path": script_path
         }
         
     except openai.APITimeoutError:
-        raise HTTPException(status_code=408, detail="Script generation timed out. Please try again with a shorter duration or simpler topic.")
+        raise HTTPException(status_code=408, detail=f"Script generation timed out for {request.duration_minutes}-minute video. Try reducing the duration or simplifying the topic.")
     except openai.APIError as e:
         raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(e)}")
     except Exception as e:
