@@ -326,12 +326,14 @@ function App() {
         const response = await fetch(`${BACKEND_URL}/api/video-status/${videoId}`);
         if (response.ok) {
           const status = await response.json();
+          console.log(`Poll ${pollCount}: Status=${status.status}, Progress=${status.progress}%`);
           setVideoProcessingStatus(status);
           
           // Update current step with progress
           if (status.status === 'processing') {
             setCurrentStep(`🎬 ${status.message} (${status.progress}%)`);
           } else if (status.status === 'completed') {
+            console.log('✅ Video completion detected!');
             setCurrentStep('✅ Video assembly complete!');
             setGeneratedContent(prev => ({ 
               ...prev, 
