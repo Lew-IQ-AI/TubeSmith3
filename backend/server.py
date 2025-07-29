@@ -207,16 +207,16 @@ async def generate_voice(request: dict):
         raise HTTPException(status_code=500, detail=f"Voice generation failed: {str(e)}")
 
 @app.post("/api/generate-thumbnail")
-async def generate_thumbnail(topic: str):
+async def generate_thumbnail(request: dict):
     """Generate thumbnail using DALL-E"""
     try:
+        topic = request.get("topic", "")
         prompt = f"""
         Create a highly engaging, clickbait-style YouTube thumbnail for a video about "{topic}".
         
         Style requirements:
         - Bold, eye-catching design
         - Dramatic lighting and colors
-        - Include large, readable text overlay
         - High contrast and vibrant colors
         - Professional quality
         - Optimized for small screen viewing
@@ -235,7 +235,7 @@ async def generate_thumbnail(topic: str):
         image_url = response.data[0].url
         thumbnail_id = str(uuid.uuid4())
         
-        img_response = requests.get(image_url)
+        img_response = requests.get(image_url, timeout=30)
         thumbnail_path = f"generated_content/thumbnails/{thumbnail_id}.png"
         
         with open(thumbnail_path, 'wb') as f:
@@ -247,6 +247,10 @@ async def generate_thumbnail(topic: str):
             "image_url": image_url
         }
         
+    except openai.APITimeoutError:
+        raise HTTPException(status_code=408, detail="Thumbnail generation timed out. Please try again.")
+    except openai.APIError as e:
+        raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Thumbnail generation failed: {str(e)}")
 
