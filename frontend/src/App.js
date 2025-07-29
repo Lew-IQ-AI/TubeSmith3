@@ -435,6 +435,14 @@ function App() {
     setStatusPollingInterval(interval);
   };
 
+  // Initialize clean state on component mount
+  useEffect(() => {
+    // Clear any persistent state on component mount
+    setVideoProcessingStatus(null);
+    setCurrentStep('');
+    setError('');
+  }, []);
+
   // Cleanup polling on unmount
   React.useEffect(() => {
     return () => {
