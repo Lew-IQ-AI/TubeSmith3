@@ -1,74 +1,74 @@
 {
-  "timestamp": "2025-07-29T13:37:28.399451",
+  "timestamp": "2025-07-29T15:59:00.673078",
   "total_tests": 11,
-  "passed_tests": 6,
-  "success_rate": 0.5454545454545454,
+  "passed_tests": 10,
+  "success_rate": 0.9090909090909091,
   "results": [
     {
       "name": "Health Check",
       "success": true,
       "details": "Status: healthy, Message: AI YouTube Generator API is running",
-      "timestamp": "2025-07-29T13:36:45.799969"
+      "timestamp": "2025-07-29T15:57:13.413064"
     },
     {
       "name": "OpenAI Integration",
       "success": true,
       "details": "Working",
-      "timestamp": "2025-07-29T13:36:47.199762"
+      "timestamp": "2025-07-29T15:57:14.512348"
     },
     {
       "name": "ElevenLabs Integration",
       "success": false,
-      "details": "headers: {'date': 'Tue, 29 Jul 2025 13:36:46 GMT', 'server': 'uvicorn', 'content-length': '141', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=31536000; includeSubDomains', 'x-trace-id': '18c4600e7c1dd7b62f18362ab0e27854', 'x-region': 'us-central1', 'via': '1.1 google, 1.1 google', 'alt-svc': 'h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'missing_permissions', 'message': 'The API key you used is missing the permission voices_read to execute this operation.'}}",
-      "timestamp": "2025-07-29T13:36:47.199786"
+      "details": "headers: {'date': 'Tue, 29 Jul 2025 15:57:13 GMT', 'server': 'uvicorn', 'content-length': '141', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=31536000; includeSubDomains', 'x-trace-id': 'fb69390d344f79581fe79af2cfc2f5ca', 'x-region': 'us-central1', 'via': '1.1 google, 1.1 google', 'alt-svc': 'h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'missing_permissions', 'message': 'The API key you used is missing the permission voices_read to execute this operation.'}}",
+      "timestamp": "2025-07-29T15:57:14.512366"
     },
     {
       "name": "Pexels Integration",
       "success": true,
       "details": "Working",
-      "timestamp": "2025-07-29T13:36:47.199791"
+      "timestamp": "2025-07-29T15:57:14.512372"
     },
     {
       "name": "AI Integrations Test",
       "success": true,
       "details": "OpenAI: success, ElevenLabs: error, Pexels: success",
-      "timestamp": "2025-07-29T13:36:47.199797"
+      "timestamp": "2025-07-29T15:57:14.512377"
     },
     {
       "name": "Script Generation",
       "success": true,
-      "details": "Script ID: b9532476-acff-4dc2-a75e-199bb23a6ca2, Words: 511",
-      "timestamp": "2025-07-29T13:37:18.224488"
+      "details": "Script ID: eeb95b1c-b4e7-45fb-935e-2c994480de51, Words: 619",
+      "timestamp": "2025-07-29T15:57:31.858011"
     },
     {
       "name": "Voice Generation",
-      "success": false,
-      "details": "HTTP 422",
-      "timestamp": "2025-07-29T13:37:20.292194"
+      "success": true,
+      "details": "Audio: generated_content/audio/eeb95b1c-b4e7-45fb-935e-2c994480de51.mp3",
+      "timestamp": "2025-07-29T15:58:21.822883"
     },
     {
       "name": "Thumbnail Generation",
-      "success": false,
-      "details": "HTTP 422",
-      "timestamp": "2025-07-29T13:37:22.310584"
+      "success": true,
+      "details": "Thumbnail ID: 3661a881-65c6-452b-8105-2245e274b8e0",
+      "timestamp": "2025-07-29T15:58:45.127580"
     },
     {
       "name": "Stock Videos Search",
-      "success": false,
-      "details": "HTTP 422",
-      "timestamp": "2025-07-29T13:37:24.337132"
+      "success": true,
+      "details": "Videos found: 5",
+      "timestamp": "2025-07-29T15:58:47.532137"
     },
     {
       "name": "YouTube Metadata Generation",
-      "success": false,
-      "details": "HTTP 422",
-      "timestamp": "2025-07-29T13:37:26.378162"
+      "success": true,
+      "details": "Metadata generated: a6410962-4fa7-4078-9d64-eb2780621cc8",
+      "timestamp": "2025-07-29T15:58:58.518892"
     },
     {
       "name": "File Download",
       "success": true,
-      "details": "Downloaded 3276 bytes",
-      "timestamp": "2025-07-29T13:37:28.399047"
+      "details": "Downloaded 4155 bytes",
+      "timestamp": "2025-07-29T15:59:00.671371"
     }
   ]
 }
