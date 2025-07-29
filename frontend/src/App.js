@@ -272,6 +272,91 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      {/* Video Preview Modal */}
+      {showVideoPreview && isVideoComplete && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-black/60 backdrop-blur-sm rounded-xl p-6 max-w-2xl w-full border border-gray-700">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-white text-xl font-bold">🎬 Your YouTube Video</h2>
+              <button
+                onClick={() => setShowVideoPreview(false)}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                ✕
+              </button>
+            </div>
+            
+            {/* Video Preview */}
+            <div className="bg-black rounded-lg overflow-hidden mb-4">
+              <div className="relative">
+                <img 
+                  src={`${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
+                  alt="YouTube Video Thumbnail"
+                  className="w-full h-64 object-cover"
+                />
+                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                  <div className="bg-black/60 rounded-full p-4">
+                    <div className="w-0 h-0 border-l-8 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Audio Player */}
+            <div className="bg-gray-800 rounded-lg p-4 mb-4">
+              <h3 className="text-white text-sm font-semibold mb-2">🎙️ Generated Voice-over</h3>
+              <audio 
+                controls 
+                className="w-full"
+                src={`${BACKEND_URL}/generated_content/audio/${generatedContent.audio.script_id}.mp3`}
+              >
+                Your browser does not support audio playback.
+              </audio>
+            </div>
+
+            {/* Video Details */}
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-gray-800 rounded-lg p-3">
+                <h4 className="text-white text-sm font-semibold mb-1">📝 Script</h4>
+                <p className="text-gray-300 text-xs">{generatedContent.script.word_count} words</p>
+                <button
+                  onClick={() => downloadFile('script', generatedContent.script.script_id)}
+                  className="mt-2 bg-blue-600 hover:bg-blue-700 text-white text-xs py-1 px-2 rounded"
+                >
+                  Download TXT
+                </button>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-3">
+                <h4 className="text-white text-sm font-semibold mb-1">🎥 Videos</h4>
+                <p className="text-gray-300 text-xs">{generatedContent.videos.total_found} HD clips</p>
+                <button
+                  onClick={() => downloadFile('thumbnail', generatedContent.thumbnail.thumbnail_id)}
+                  className="mt-2 bg-purple-600 hover:bg-purple-700 text-white text-xs py-1 px-2 rounded"
+                >
+                  Download PNG
+                </button>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => downloadFile('audio', generatedContent.audio.script_id)}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold"
+              >
+                📥 Download Audio
+              </button>
+              <button
+                onClick={() => setShowVideoPreview(false)}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-semibold"
+              >
+                Close Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header - Extra Compact */}
       <div className="container mx-auto px-4 py-2">
         <div className="text-center mb-4">
@@ -415,47 +500,30 @@ function App() {
             </div>
           </div>
 
-          {/* Quick Downloads - Compact */}
-          {(generatedContent.script || generatedContent.audio || generatedContent.thumbnail) && (
-            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-3 mb-3 border border-gray-700">
-              <h3 className="text-white text-sm font-semibold mb-2 flex items-center justify-center">
-                📥 Quick Downloads
-              </h3>
-              <div className="flex justify-center gap-2">
-                {generatedContent.script && (
-                  <button
-                    onClick={() => downloadFile('script', generatedContent.script.script_id)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-lg transition-all text-xs flex items-center gap-1"
-                  >
-                    📄 TXT
-                  </button>
-                )}
-                {generatedContent.audio && (
-                  <button
-                    onClick={() => downloadFile('audio', generatedContent.audio.script_id)}
-                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-lg transition-all text-xs flex items-center gap-1"
-                  >
-                    🎵 MP3
-                  </button>
-                )}
-                {generatedContent.thumbnail && (
-                  <button
-                    onClick={() => downloadFile('thumbnail', generatedContent.thumbnail.thumbnail_id)}
-                    className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-1 px-3 rounded-lg transition-all text-xs flex items-center gap-1"
-                  >
-                    🖼️ PNG
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Completion Message - Compact */}
-          {generatedContent.script && generatedContent.audio && generatedContent.thumbnail && generatedContent.videos && (
-            <div className="bg-green-900/30 backdrop-blur-sm rounded-xl p-3 border border-green-700 mb-3">
+          {/* Completion with Clickable Thumbnail */}
+          {isVideoComplete && (
+            <div className="bg-green-900/30 backdrop-blur-sm rounded-xl p-4 border border-green-700 mb-3">
               <div className="text-center">
-                <p className="text-green-300 text-sm font-semibold">✅ Complete YouTube video ready!</p>
-                <p className="text-green-200 text-xs mt-1">Combining audio, visuals, and effects</p>
+                <p className="text-green-300 text-lg font-semibold mb-3">✅ YouTube Video Complete!</p>
+                
+                {/* Large Clickable Thumbnail */}
+                <div 
+                  className="relative cursor-pointer group mx-auto max-w-sm"
+                  onClick={handleThumbnailClick}
+                >
+                  <img 
+                    src={`${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
+                    alt="Generated YouTube thumbnail"
+                    className="w-full h-32 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform"
+                  />
+                  <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center group-hover:bg-black/30 transition-colors">
+                    <div className="bg-red-600 rounded-full p-3 group-hover:scale-110 transition-transform">
+                      <div className="w-0 h-0 border-l-6 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <p className="text-green-200 text-sm mt-3">Click to preview your video!</p>
               </div>
             </div>
           )}
