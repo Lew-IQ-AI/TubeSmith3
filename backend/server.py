@@ -466,7 +466,7 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             print(f"Error fetching stock videos: {e}")
             stock_videos = []
         
-        update_video_status(video_id, "processing", 30, "Preparing video components...")
+        update_video_status(video_id, "processing", 60, "Downloading and processing stock videos...")
         
         # Get audio duration using a simple approach
         try:
@@ -482,11 +482,103 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             # Fallback: assume reasonable duration
             audio_duration = 60.0
         
-        update_video_status(video_id, "processing", 60, "Creating video with thumbnail and audio...")
+        print(f"Audio duration: {audio_duration} seconds")
         
+        # Create final video output path
         output_path = f"generated_content/videos/{video_id}.mp4"
         
+        # Create video directory for temporary files
+        temp_video_dir = f"generated_content/temp_videos/{video_id}"
+        os.makedirs(temp_video_dir, exist_ok=True)
+        
         try:
+            if stock_videos and len(stock_videos) > 0:
+                # OPTION 1: Use stock video clips (dynamic video)
+                print("Creating dynamic video with stock footage...")
+                update_video_status(video_id, "processing", 70, "Creating dynamic video with stock clips...")
+                
+                # Download stock video clips
+                downloaded_clips = []
+                total_clip_duration = 0
+                
+                for i, stock_video in enumerate(stock_videos):
+                    try:
+                        clip_path = f"{temp_video_dir}/clip_{i}.mp4"
+                        
+                        # Download the video clip
+                        clip_response = requests.get(stock_video['url'], timeout=60)
+                        if clip_response.status_code == 200:
+                            with open(clip_path, 'wb') as f:
+                                f.write(clip_response.content)
+                            
+                            # Get actual duration of downloaded clip
+                            try:
+                                dur_cmd = ['/usr/bin/ffprobe', '-v', 'quiet', '-show_entries', 'format=duration', 
+                                         '-of', 'default=noprint_wrappers=1:nokey=1', clip_path]
+                                dur_result = subprocess.run(dur_cmd, capture_output=True, text=True, timeout=10)
+                                clip_duration = float(dur_result.stdout.strip()) if dur_result.stdout.strip() else 10.0
+                            except:
+                                clip_duration = min(stock_video.get('duration', 10), 20)  # Max 20 seconds per clip
+                            
+                            downloaded_clips.append({
+                                'path': clip_path,
+                                'duration': clip_duration
+                            })
+                            total_clip_duration += clip_duration
+                            
+                            print(f"Downloaded clip {i}: {clip_duration}s")
+                            
+                            # Stop if we have enough duration
+                            if total_clip_duration >= audio_duration:
+                                break
+                                
+                    except Exception as e:
+                        print(f"Error downloading clip {i}: {e}")
+                        continue
+                
+                if downloaded_clips:
+                    # Create video from stock clips + audio
+                    update_video_status(video_id, "processing", 80, "Combining stock clips with audio...")
+                    
+                    # Create FFmpeg input list
+                    clips_list_path = f"{temp_video_dir}/clips_list.txt"
+                    with open(clips_list_path, 'w') as f:
+                        for clip in downloaded_clips:
+                            f.write(f"file '{clip['path']}'\n")
+                    
+                    # Concatenate clips and add audio
+                    ffmpeg_cmd = [
+                        '/usr/bin/ffmpeg', '-y',
+                        '-f', 'concat',
+                        '-safe', '0',
+                        '-i', clips_list_path,
+                        '-i', audio_path,
+                        '-c:v', 'libx264',
+                        '-c:a', 'aac',
+                        '-preset', 'medium',
+                        '-crf', '23',
+                        '-vf', f'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2',
+                        '-t', str(audio_duration),
+                        '-shortest',
+                        '-movflags', '+faststart',
+                        output_path
+                    ]
+                    
+                    print(f"Creating dynamic video with {len(downloaded_clips)} clips")
+                    
+                else:
+                    # Fallback to static thumbnail if no clips downloaded
+                    print("No stock clips available, using static thumbnail...")
+                    raise Exception("No stock clips downloaded")
+                    
+            else:
+                raise Exception("No stock videos available")
+                
+        except Exception as e:
+            # OPTION 2: Fallback to static thumbnail + audio (current behavior)
+            print(f"Falling back to static video due to: {e}")
+            update_video_status(video_id, "processing", 80, "Creating static video with thumbnail...")
+            
             # Create video using improved FFmpeg command for better compatibility
             ffmpeg_cmd = [
                 '/usr/bin/ffmpeg', '-y',  # Overwrite output file (use full path)
