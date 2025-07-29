@@ -293,10 +293,14 @@ function App() {
                   src={`${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
                   alt="YouTube Video Thumbnail"
                   className="w-full h-64 object-cover"
+                  onError={(e) => {
+                    console.error('Thumbnail failed to load:', e);
+                    e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23333"/><text x="200" y="150" text-anchor="middle" fill="white" font-size="16">Thumbnail Preview</text></svg>';
+                  }}
                 />
                 <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                  <div className="bg-black/60 rounded-full p-4">
-                    <div className="w-0 h-0 border-l-8 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1"></div>
+                  <div className="bg-red-600/80 rounded-full p-4 hover:bg-red-600 transition-colors cursor-pointer">
+                    <div className="w-0 h-0 border-l-8 border-l-white border-t-6 border-t-transparent border-b-6 border-b-transparent ml-1"></div>
                   </div>
                 </div>
               </div>
