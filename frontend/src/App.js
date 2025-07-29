@@ -3,6 +3,7 @@ import './App.css';
 
 function App() {
   const [topic, setTopic] = useState('');
+  const [videoLength, setVideoLength] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentStep, setCurrentStep] = useState('');
   const [generatedContent, setGeneratedContent] = useState({
