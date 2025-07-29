@@ -447,31 +447,56 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             update_video_status(video_id, "processing", 80, "Rendering final video...")
             
             # Run FFmpeg with timeout
-            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=180)
+            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=120)
+            
+            print(f"FFmpeg completed with return code: {result.returncode}")
+            if result.stdout:
+                print(f"FFmpeg stdout: {result.stdout}")
+            if result.stderr:
+                print(f"FFmpeg stderr: {result.stderr}")
             
             if result.returncode != 0:
-                print(f"FFmpeg error: {result.stderr}")
+                print(f"FFmpeg failed with error: {result.stderr}")
                 update_video_status(video_id, "failed", 0, "", f"Video rendering failed: {result.stderr[:100]}")
                 return
             
+            print(f"FFmpeg succeeded, checking output file: {output_path}")
+            
         except subprocess.TimeoutExpired:
+            print("FFmpeg process timed out")
             update_video_status(video_id, "failed", 0, "", "Video rendering timed out")
             return
         except Exception as e:
+            print(f"Exception during video creation: {str(e)}")
             update_video_status(video_id, "failed", 0, "", f"Video creation error: {str(e)}")
             return
         
         update_video_status(video_id, "processing", 95, "Finalizing video file...")
         
+        # Wait a moment for file system to sync
+        import time
+        time.sleep(2)
+        
         # Check if video was created successfully
         try:
-            file_size = os.path.getsize(output_path)
-            if file_size < 10000:  # If file is too small (less than 10KB), it probably failed
-                update_video_status(video_id, "failed", 0, "", "Video file too small - creation failed")
+            if not os.path.exists(output_path):
+                print(f"Output file does not exist: {output_path}")
+                update_video_status(video_id, "failed", 0, "", "Video file was not created")
                 return
-        except:
-            update_video_status(video_id, "failed", 0, "", "Video file not created")
+                
+            file_size = os.path.getsize(output_path)
+            print(f"Video file created successfully: {file_size} bytes")
+            
+            if file_size < 10000:  # If file is too small (less than 10KB), it probably failed
+                print(f"Video file too small: {file_size} bytes")
+                update_video_status(video_id, "failed", 0, "", f"Video file too small ({file_size} bytes) - creation failed")
+                return
+        except Exception as e:
+            print(f"Error checking video file: {str(e)}")
+            update_video_status(video_id, "failed", 0, "", "Could not verify video file")
             return
+        
+        print(f"Video creation successful, updating status to completed")
         
         # Mark as completed
         update_video_status(video_id, "completed", 100, "Video ready for download!")
@@ -484,7 +509,7 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             "clips_used": 1  # Using thumbnail as single "clip"
         })
         
-        print(f"Video creation completed: {video_id}, size: {file_size} bytes, duration: {audio_duration}s")
+        print(f"Video creation completed successfully: {video_id}, size: {file_size} bytes, duration: {audio_duration}s")
         
     except Exception as e:
         print(f"Video processing failed: {str(e)}")
