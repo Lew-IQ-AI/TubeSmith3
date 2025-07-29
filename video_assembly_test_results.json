@@ -1,0 +1,58 @@
+{
+  "timestamp": "2025-07-29T20:49:49.489515",
+  "total_tests": 8,
+  "passed_tests": 8,
+  "success_rate": 1.0,
+  "script_id": "d5424f18-e059-4934-af2c-bedeb8c1eb59",
+  "video_id": "481c5c50-0df4-49d1-9ec1-ece6a45512aa",
+  "results": [
+    {
+      "name": "Script Generation for Video",
+      "success": true,
+      "details": "Script ID: d5424f18-e059-4934-af2c-bedeb8c1eb59, Words: 486, Time: 14.51s",
+      "timestamp": "2025-07-29T20:48:32.847764"
+    },
+    {
+      "name": "Voice Generation for Video",
+      "success": true,
+      "details": "Audio: generated_content/audio/d5424f18-e059-4934-af2c-bedeb8c1eb59.mp3, Time: 38.37s",
+      "timestamp": "2025-07-29T20:49:13.223132"
+    },
+    {
+      "name": "Thumbnail Generation for Video",
+      "success": true,
+      "details": "Thumbnail ID: 2c833810-30ce-4c39-9c15-cc83eb661fdc, Time: 18.88s",
+      "timestamp": "2025-07-29T20:49:34.107133"
+    },
+    {
+      "name": "Video Assembly API",
+      "success": true,
+      "details": "Video ID: 481c5c50-0df4-49d1-9ec1-ece6a45512aa, Status: processing, Time: 0.08s",
+      "timestamp": "2025-07-29T20:49:37.189926"
+    },
+    {
+      "name": "Video Status Polling",
+      "success": true,
+      "details": "Completed in 8.7s, Size: 262192 bytes, Duration: 60s",
+      "timestamp": "2025-07-29T20:49:47.888555"
+    },
+    {
+      "name": "Video Status Recovery",
+      "success": true,
+      "details": "Recovery mechanism working - Status: completed, File size: 262192 bytes",
+      "timestamp": "2025-07-29T20:49:48.388609"
+    },
+    {
+      "name": "FFmpeg Integration",
+      "success": true,
+      "details": "FFmpeg integration working - Video status: completed",
+      "timestamp": "2025-07-29T20:49:48.791582"
+    },
+    {
+      "name": "Video Download",
+      "success": true,
+      "details": "Downloaded 262192 bytes, Content-Type: video/mp4, Time: 0.67s",
+      "timestamp": "2025-07-29T20:49:49.460427"
+    }
+  ]
+}
