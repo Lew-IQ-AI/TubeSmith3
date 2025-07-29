@@ -381,6 +381,7 @@ def update_video_status(video_id: str, status: str, progress: int = 0, message: 
     # Also save to file for persistence
     status_file = f"generated_content/status/{video_id}.json"
     try:
+        os.makedirs(os.path.dirname(status_file), exist_ok=True)
         with open(status_file, 'w') as f:
             json.dump(video_status[video_id], f)
     except Exception as e:
