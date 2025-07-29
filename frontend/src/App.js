@@ -801,7 +801,19 @@ function App() {
                     </div>
                   </div>
                   
-                  <p className="text-green-200 text-sm text-center mt-3">Click to preview!</p>
+                  <p className="text-green-200 text-sm text-center mt-2 mb-3">Click to preview!</p>
+                  
+                  {/* Download Video Button */}
+                  <button
+                    onClick={() => generatedContent.video && downloadFile('video', generatedContent.video.video_id, getFilename('video', topic))}
+                    className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-md text-sm transition-all flex items-center justify-center gap-2"
+                    disabled={!generatedContent.video?.video_id}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Download Video (MP4)
+                  </button>
                 </div>
               ) : (
                 <div className="bg-gray-800/30 backdrop-blur-sm rounded-lg p-4 border border-gray-600 w-full max-w-sm">
