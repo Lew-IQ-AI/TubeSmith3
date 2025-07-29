@@ -574,7 +574,7 @@ async def get_video_status(video_id: str):
                 raise HTTPException(status_code=404, detail="Video not found")
         
         # Check if video file exists but status shows processing/failed (recovery mechanism)
-        if status.get("status") in ["processing", "failed"] and status.get("progress", 0) >= 30:
+        if status.get("status") in ["processing", "failed"]:
             video_file = f"generated_content/videos/{video_id}.mp4"
             if os.path.exists(video_file):
                 try:
