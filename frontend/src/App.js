@@ -477,6 +477,7 @@ function App() {
 
   // Force status refresh function for debugging stuck videos
   const forceStatusRefresh = async () => {
+    alert('Force refresh button clicked!'); // DEBUG: Test if function is called
     console.log('🔄 Force refresh triggered');
     
     // Get video ID from current processing status or use any available ID
