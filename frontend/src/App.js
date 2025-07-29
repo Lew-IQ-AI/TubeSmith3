@@ -321,13 +321,9 @@ function App() {
                   console.error('Audio failed to load:', e.target.src);
                 }}
                 onLoadedMetadata={(e) => {
-                  console.log('Audio loaded successfully:', e.target.duration);
+                  console.log('Audio loaded successfully, duration:', e.target.duration);
                 }}
               >
-                <source 
-                  src={`${BACKEND_URL}/generated_content/audio/${generatedContent.audio.script_id}.mp3`} 
-                  type="audio/mpeg" 
-                />
                 <source 
                   src={`${BACKEND_URL}/api/download/audio/${generatedContent.audio.script_id}`} 
                   type="audio/mpeg" 
