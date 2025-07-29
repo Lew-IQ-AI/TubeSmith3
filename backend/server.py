@@ -4,8 +4,6 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
 import uuid
-import asyncio
-import json
 from typing import Optional
 from pydantic import BaseModel
 import openai
