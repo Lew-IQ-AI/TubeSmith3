@@ -11,7 +11,7 @@ from datetime import datetime
 import time
 
 class TubeSmithAPITester:
-    def __init__(self, base_url="https://6b031c5d-6348-482d-bcad-249b76dc7c9c.preview.emergentagent.com"):
+    def __init__(self, base_url="https://646b5252-5059-40dc-9ac8-d6f7a33c387c.preview.emergentagent.com"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
