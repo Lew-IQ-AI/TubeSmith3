@@ -433,9 +433,44 @@ function App() {
     };
   }, [statusPollingInterval]);
 
-  const downloadFile = (fileType, fileId) => {
+  // Download handlers for different components
+  const downloadFile = (fileType, fileId, filename) => {
+    if (!fileId) {
+      console.error('No file ID available for download');
+      return;
+    }
+    
     const downloadUrl = `${BACKEND_URL}/api/download/${fileType}/${fileId}`;
-    window.open(downloadUrl, '_blank');
+    console.log(`Downloading ${fileType}: ${downloadUrl}`);
+    
+    // Create temporary link and trigger download
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = filename || `${fileId}.${getFileExtension(fileType)}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const getFileExtension = (fileType) => {
+    const extensions = {
+      'script': 'txt',
+      'audio': 'mp3', 
+      'thumbnail': 'png',
+      'video': 'mp4'
+    };
+    return extensions[fileType] || 'txt';
+  };
+
+  const getFilename = (fileType, topic = 'video') => {
+    const cleanTopic = topic.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+    const filenames = {
+      'script': `${cleanTopic}_script.txt`,
+      'audio': `${cleanTopic}_voiceover.mp3`,
+      'thumbnail': `${cleanTopic}_thumbnail.png`, 
+      'video': `${cleanTopic}_video.mp4`
+    };
+    return filenames[fileType] || `${cleanTopic}.txt`;
   };
 
   const isVideoComplete = generatedContent.script && generatedContent.audio && generatedContent.thumbnail && generatedContent.videos && generatedContent.video;
