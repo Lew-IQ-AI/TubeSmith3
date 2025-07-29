@@ -545,7 +545,9 @@ def process_video_background(video_id: str, script_id: str, topic: str):
                     clips_list_path = f"{temp_video_dir}/clips_list.txt"
                     with open(clips_list_path, 'w') as f:
                         for clip in downloaded_clips:
-                            f.write(f"file '{clip['path']}'\n")
+                            # Use absolute path for FFmpeg concat
+                            absolute_path = os.path.abspath(clip['path'])
+                            f.write(f"file '{absolute_path}'\n")
                     
                     # Concatenate clips and add audio
                     ffmpeg_cmd = [
