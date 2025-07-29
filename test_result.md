@@ -243,6 +243,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "Cards display for script, audio, thumbnail, videos, and metadata with download functionality"
+      - working: true
+        agent: "testing"
+        comment: "Script card display tested successfully. Shows '775 words • Professional YouTube script' with content preview and functional download button. Card appears immediately after script generation completes."
 
   - task: "Progress Tracking UI"
     implemented: true
