@@ -735,12 +735,27 @@ function App() {
                   )}
                   {/* DEBUG: Force refresh button for stuck videos */}
                   {videoProcessingStatus?.status === 'processing' && videoProcessingStatus?.progress >= 80 && (
-                    <button
-                      onClick={forceStatusRefresh}
-                      className="mt-2 w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded text-xs"
-                    >
-                      🔄 Force Status Refresh
-                    </button>
+                    <div className="mt-2 space-y-1">
+                      <button
+                        onClick={forceStatusRefresh}
+                        className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded text-xs"
+                      >
+                        🔄 Force Status Refresh
+                      </button>
+                      {/* Direct download link for stuck videos */}
+                      <button
+                        onClick={() => {
+                          if (videoProcessingStatus?.video_id) {
+                            const videoId = videoProcessingStatus.video_id;
+                            downloadFile('video', videoId, getFilename('video', topic));
+                          }
+                        }}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs"
+                        title="Download video directly (works even if stuck at 80%)"
+                      >
+                        ⬇️ Download Video Anyway
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
