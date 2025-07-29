@@ -270,7 +270,7 @@ function App() {
             🔨 TubeSmith
           </h1>
           <p className="text-lg text-gray-300">
-            Craft viral YouTube videos with AI - Transform any topic into professional content
+            1-Click Content Creation
           </p>
         </div>
 
