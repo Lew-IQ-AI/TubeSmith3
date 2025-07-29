@@ -15,6 +15,8 @@ function App() {
     metadata: null,
     video: null
   });
+  const [videoProcessingStatus, setVideoProcessingStatus] = useState(null);
+  const [statusPollingInterval, setStatusPollingInterval] = useState(null);
   const [testResults, setTestResults] = useState(null);
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
