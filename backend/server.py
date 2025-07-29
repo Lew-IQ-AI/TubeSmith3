@@ -557,17 +557,40 @@ async def get_video_status(video_id: str):
     try:
         # Try to get from memory first
         if video_id in video_status:
-            return video_status[video_id]
+            status = video_status[video_id]
+        else:
+            # Try to load from file
+            status_file = f"generated_content/status/{video_id}.json"
+            if os.path.exists(status_file):
+                with open(status_file, 'r') as f:
+                    status = json.load(f)
+                    video_status[video_id] = status  # Cache in memory
+            else:
+                raise HTTPException(status_code=404, detail="Video not found")
         
-        # Try to load from file
-        status_file = f"generated_content/status/{video_id}.json"
-        if os.path.exists(status_file):
-            with open(status_file, 'r') as f:
-                status = json.load(f)
-                video_status[video_id] = status  # Cache in memory
-                return status
+        # Check if video file exists but status shows processing (recovery mechanism)
+        if status.get("status") == "processing" and status.get("progress", 0) >= 80:
+            video_file = f"generated_content/videos/{video_id}.mp4"
+            if os.path.exists(video_file):
+                try:
+                    file_size = os.path.getsize(video_file)
+                    if file_size > 10000:  # File exists and is reasonable size
+                        print(f"Recovering video status for {video_id} - file exists with size {file_size}")
+                        # Update status to completed
+                        status.update({
+                            "status": "completed",
+                            "progress": 100,
+                            "message": "Video ready for download!",
+                            "file_size": file_size,
+                            "video_path": video_file,
+                            "clips_used": 1
+                        })
+                        video_status[video_id] = status
+                        update_video_status(video_id, "completed", 100, "Video ready for download!")
+                except Exception as e:
+                    print(f"Error in status recovery: {e}")
         
-        raise HTTPException(status_code=404, detail="Video not found")
+        return status
         
     except HTTPException:
         raise
