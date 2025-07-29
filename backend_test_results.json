@@ -1,74 +1,110 @@
 {
-  "timestamp": "2025-07-29T15:59:00.673078",
-  "total_tests": 11,
-  "passed_tests": 10,
-  "success_rate": 0.9090909090909091,
+  "timestamp": "2025-07-29T22:27:30.739074",
+  "total_tests": 17,
+  "passed_tests": 14,
+  "success_rate": 0.8235294117647058,
   "results": [
     {
       "name": "Health Check",
       "success": true,
       "details": "Status: healthy, Message: AI YouTube Generator API is running",
-      "timestamp": "2025-07-29T15:57:13.413064"
+      "timestamp": "2025-07-29T22:25:39.488484"
     },
     {
       "name": "OpenAI Integration",
       "success": true,
       "details": "Working",
-      "timestamp": "2025-07-29T15:57:14.512348"
+      "timestamp": "2025-07-29T22:25:41.407779"
     },
     {
       "name": "ElevenLabs Integration",
-      "success": false,
-      "details": "headers: {'date': 'Tue, 29 Jul 2025 15:57:13 GMT', 'server': 'uvicorn', 'content-length': '141', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=31536000; includeSubDomains', 'x-trace-id': 'fb69390d344f79581fe79af2cfc2f5ca', 'x-region': 'us-central1', 'via': '1.1 google, 1.1 google', 'alt-svc': 'h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'missing_permissions', 'message': 'The API key you used is missing the permission voices_read to execute this operation.'}}",
-      "timestamp": "2025-07-29T15:57:14.512366"
+      "success": true,
+      "details": "Working",
+      "timestamp": "2025-07-29T22:25:41.407794"
     },
     {
       "name": "Pexels Integration",
       "success": true,
       "details": "Working",
-      "timestamp": "2025-07-29T15:57:14.512372"
+      "timestamp": "2025-07-29T22:25:41.407799"
     },
     {
       "name": "AI Integrations Test",
       "success": true,
-      "details": "OpenAI: success, ElevenLabs: error, Pexels: success",
-      "timestamp": "2025-07-29T15:57:14.512377"
+      "details": "OpenAI: success, ElevenLabs: success, Pexels: success",
+      "timestamp": "2025-07-29T22:25:41.407804"
     },
     {
       "name": "Script Generation",
       "success": true,
-      "details": "Script ID: eeb95b1c-b4e7-45fb-935e-2c994480de51, Words: 619",
-      "timestamp": "2025-07-29T15:57:31.858011"
+      "details": "Script ID: 453577ab-c103-44ba-b2b1-c5ce10b5e39f, Words: 691",
+      "timestamp": "2025-07-29T22:25:58.506424"
     },
     {
       "name": "Voice Generation",
       "success": true,
-      "details": "Audio: generated_content/audio/eeb95b1c-b4e7-45fb-935e-2c994480de51.mp3",
-      "timestamp": "2025-07-29T15:58:21.822883"
+      "details": "Audio: generated_content/audio/453577ab-c103-44ba-b2b1-c5ce10b5e39f.mp3",
+      "timestamp": "2025-07-29T22:26:54.706141"
     },
     {
       "name": "Thumbnail Generation",
       "success": true,
-      "details": "Thumbnail ID: 3661a881-65c6-452b-8105-2245e274b8e0",
-      "timestamp": "2025-07-29T15:58:45.127580"
+      "details": "Thumbnail ID: e11fcb73-61d0-4b7f-9937-ec5b7aefc574",
+      "timestamp": "2025-07-29T22:27:15.509479"
     },
     {
       "name": "Stock Videos Search",
       "success": true,
       "details": "Videos found: 5",
-      "timestamp": "2025-07-29T15:58:47.532137"
+      "timestamp": "2025-07-29T22:27:17.901333"
     },
     {
       "name": "YouTube Metadata Generation",
       "success": true,
-      "details": "Metadata generated: a6410962-4fa7-4078-9d64-eb2780621cc8",
-      "timestamp": "2025-07-29T15:58:58.518892"
+      "details": "Metadata generated: aba91086-7006-4ced-a231-75095cddcdb0",
+      "timestamp": "2025-07-29T22:27:28.252472"
+    },
+    {
+      "name": "Download Script",
+      "success": false,
+      "details": "HTTP 500",
+      "timestamp": "2025-07-29T22:27:30.350885"
+    },
+    {
+      "name": "Download Audio",
+      "success": true,
+      "details": "\u2705 383105 bytes, audio/mpeg",
+      "timestamp": "2025-07-29T22:27:30.421243"
+    },
+    {
+      "name": "Download Thumbnail",
+      "success": true,
+      "details": "\u2705 2783937 bytes, image/png",
+      "timestamp": "2025-07-29T22:27:30.497034"
+    },
+    {
+      "name": "Download Video",
+      "success": true,
+      "details": "\u2705 1422790 bytes, video/mp4",
+      "timestamp": "2025-07-29T22:27:30.569742"
+    },
+    {
+      "name": "Invalid File Type Handling",
+      "success": false,
+      "details": "HTTP 500 (expected 400)",
+      "timestamp": "2025-07-29T22:27:30.626293"
+    },
+    {
+      "name": "Non-existent File Handling",
+      "success": false,
+      "details": "HTTP 500 (expected 404)",
+      "timestamp": "2025-07-29T22:27:30.683412"
     },
     {
       "name": "File Download",
       "success": true,
-      "details": "Downloaded 4155 bytes",
-      "timestamp": "2025-07-29T15:59:00.671371"
+      "details": "Downloaded 4746 bytes, text/plain; charset=utf-8",
+      "timestamp": "2025-07-29T22:27:30.737409"
     }
   ]
 }
