@@ -177,10 +177,10 @@ function App() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-pink-400 to-violet-400 bg-clip-text text-transparent">
-            🎬 AI YouTube Video Generator
+            🔨 TubeSmith
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Transform any topic into a complete viral YouTube video with AI-generated script, voice-over, visuals, and thumbnails
+            Craft viral YouTube videos with AI - Transform any topic into professional content with script, voice-over, visuals, and thumbnails
           </p>
         </div>
 
