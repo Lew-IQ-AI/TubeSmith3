@@ -477,21 +477,39 @@ function App() {
 
   // Force status refresh function for debugging stuck videos
   const forceStatusRefresh = async () => {
-    if (!videoProcessingStatus?.video_id) return;
+    console.log('🔄 Force refresh triggered');
+    
+    // Get video ID from current processing status or use any available ID
+    let videoId = videoProcessingStatus?.video_id;
+    
+    if (!videoId) {
+      console.error('No video ID available for force refresh');
+      return;
+    }
     
     try {
-      const response = await fetch(`${BACKEND_URL}/api/video-status/${videoProcessingStatus.video_id}`);
+      console.log(`Force checking status for video ID: ${videoId}`);
+      const response = await fetch(`${BACKEND_URL}/api/video-status/${videoId}`, {
+        cache: 'no-cache',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      
       if (response.ok) {
         const status = await response.json();
-        console.log('Force refresh status:', status);
+        console.log('Force refresh result:', status);
         setVideoProcessingStatus(status);
         
+        // Force update the UI immediately
         if (status.status === 'completed') {
+          console.log('🎉 Force refresh detected completion!');
           setCurrentStep('✅ Video assembly complete!');
           setGeneratedContent(prev => ({ 
             ...prev, 
             video: {
-              video_id: videoProcessingStatus.video_id,
+              video_id: videoId,
               duration: status.duration || 60,
               file_size: status.file_size || 500000,
               clips_used: status.clips_used || 1,
@@ -499,12 +517,21 @@ function App() {
             }
           }));
           
-          // Clear polling
+          // Clear polling since we're done
           if (statusPollingInterval) {
             clearInterval(statusPollingInterval);
             setStatusPollingInterval(null);
           }
+          
+          // Also clear the generating state
+          setIsGenerating(false);
+        } else if (status.status === 'processing') {
+          setCurrentStep(`🎬 ${status.message} (${status.progress}%)`);
+        } else if (status.status === 'failed') {
+          setCurrentStep(`❌ Video assembly failed: ${status.error || 'Unknown error'}`);
         }
+      } else {
+        console.error('Force refresh failed:', response.status);
       }
     } catch (error) {
       console.error('Force refresh error:', error);
