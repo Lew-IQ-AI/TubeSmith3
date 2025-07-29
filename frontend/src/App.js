@@ -135,18 +135,31 @@ function App() {
   const getStockVideos = async () => {
     try {
       setCurrentStep('Finding stock videos...');
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds timeout
+      
       const response = await fetch(`${BACKEND_URL}/api/get-stock-videos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, count: 10 })
+        body: JSON.stringify({ topic, count: 10 }),
+        signal: controller.signal
       });
       
-      if (!response.ok) throw new Error('Stock video search failed');
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Stock video search failed: ${errorData}`);
+      }
       
       const result = await response.json();
       setGeneratedContent(prev => ({ ...prev, videos: result }));
       return result;
     } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Stock video search timed out. Please try again.');
+      }
       console.error('Stock video search failed:', error);
       throw error;
     }
