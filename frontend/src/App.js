@@ -298,7 +298,7 @@ function App() {
     window.open(downloadUrl, '_blank');
   };
 
-  const isVideoComplete = generatedContent.script && generatedContent.audio && generatedContent.thumbnail && generatedContent.videos;
+  const isVideoComplete = generatedContent.script && generatedContent.audio && generatedContent.thumbnail && generatedContent.videos && generatedContent.video;
 
   const handleThumbnailClick = () => {
     if (isVideoComplete) {
