@@ -316,10 +316,27 @@ function App() {
               <audio 
                 controls 
                 className="w-full h-8"
-                src={`${BACKEND_URL}/generated_content/audio/${generatedContent.audio.script_id}.mp3`}
+                preload="metadata"
+                onError={(e) => {
+                  console.error('Audio failed to load:', e.target.src);
+                }}
+                onLoadedMetadata={(e) => {
+                  console.log('Audio loaded successfully:', e.target.duration);
+                }}
               >
+                <source 
+                  src={`${BACKEND_URL}/generated_content/audio/${generatedContent.audio.script_id}.mp3`} 
+                  type="audio/mpeg" 
+                />
+                <source 
+                  src={`${BACKEND_URL}/api/download/audio/${generatedContent.audio.script_id}`} 
+                  type="audio/mpeg" 
+                />
                 Your browser does not support audio playback.
               </audio>
+              <p className="text-xs text-gray-400 mt-1">
+                Audio ID: {generatedContent.audio.script_id}
+              </p>
             </div>
 
             {/* Action Buttons */}
