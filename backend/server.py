@@ -88,8 +88,15 @@ async def test_ai_integrations():
     
     # Test ElevenLabs
     try:
-        voices = elevenlabs_client.voices.get_all()
-        results["elevenlabs"] = {"status": "success", "voices_count": len(voices.voices) if hasattr(voices, 'voices') else len(voices)}
+        # Test text-to-speech instead of voices list (doesn't require voices_read permission)
+        audio = elevenlabs_client.text_to_speech.convert(
+            voice_id="pNInz6obpgDQGcFmaJgB",  # Adam voice ID
+            text="ElevenLabs integration test",
+            output_format="mp3_22050_32"
+        )
+        # Just check if we can create the audio object without saving
+        audio_data = b"".join(audio)
+        results["elevenlabs"] = {"status": "success", "audio_bytes": len(audio_data)}
     except Exception as e:
         results["elevenlabs"] = {"status": "error", "error": str(e)}
     
