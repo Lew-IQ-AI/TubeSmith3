@@ -12,7 +12,8 @@ function App() {
     audio: null,
     thumbnail: null,
     videos: null,
-    metadata: null
+    metadata: null,
+    video: null
   });
   const [testResults, setTestResults] = useState(null);
 
