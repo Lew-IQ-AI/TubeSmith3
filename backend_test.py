@@ -203,8 +203,98 @@ class TubeSmithAPITester:
         except Exception as e:
             return self.log_test("YouTube Metadata Generation", False, f"Error: {str(e)}")
 
+    def test_download_endpoints_comprehensive(self):
+        """Comprehensive test of all download endpoints"""
+        print("\n📥 Download Endpoints Testing:")
+        
+        # Test existing files from previous tests
+        test_files = {
+            "script": "237bd775-0fe5-4a66-b8f4-e89c3dc56c11",
+            "audio": "a73409c0-4192-41e9-9329-3c2a7dfb8932", 
+            "thumbnail": "78753f66-df79-49d2-af80-d05c72fedf05",
+            "video": "237bd775-0fe5-4a66-b8f4-e89c3dc56c11"
+        }
+        
+        expected_content_types = {
+            "script": "text/plain",
+            "audio": "audio/mpeg",
+            "thumbnail": "image/png", 
+            "video": "video/mp4"
+        }
+        
+        expected_extensions = {
+            "script": ".txt",
+            "audio": ".mp3",
+            "thumbnail": ".png",
+            "video": ".mp4"
+        }
+        
+        all_passed = True
+        
+        # Test each file type
+        for file_type, file_id in test_files.items():
+            try:
+                response = requests.get(f"{self.base_url}/api/download/{file_type}/{file_id}",
+                                      timeout=30)
+                
+                if response.status_code == 200:
+                    # Check content type
+                    content_type = response.headers.get('content-type', '')
+                    expected_ct = expected_content_types[file_type]
+                    
+                    # Check content length
+                    content_length = len(response.content)
+                    
+                    # Check filename in headers
+                    content_disposition = response.headers.get('content-disposition', '')
+                    expected_ext = expected_extensions[file_type]
+                    
+                    ct_correct = expected_ct in content_type
+                    size_reasonable = content_length > 100  # At least 100 bytes
+                    
+                    if ct_correct and size_reasonable:
+                        details = f"✅ {content_length} bytes, {content_type}"
+                        success = self.log_test(f"Download {file_type.title()}", True, details)
+                    else:
+                        details = f"❌ Size: {content_length}, CT: {content_type}"
+                        success = self.log_test(f"Download {file_type.title()}", False, details)
+                    
+                    all_passed = all_passed and success
+                    
+                else:
+                    success = self.log_test(f"Download {file_type.title()}", False, f"HTTP {response.status_code}")
+                    all_passed = False
+                    
+            except Exception as e:
+                success = self.log_test(f"Download {file_type.title()}", False, f"Error: {str(e)}")
+                all_passed = False
+        
+        # Test invalid file type
+        try:
+            response = requests.get(f"{self.base_url}/api/download/invalid/test-id", timeout=10)
+            invalid_handled = response.status_code == 400
+            self.log_test("Invalid File Type Handling", invalid_handled, 
+                         f"HTTP {response.status_code} (expected 400)")
+            all_passed = all_passed and invalid_handled
+        except Exception as e:
+            self.log_test("Invalid File Type Handling", False, f"Error: {str(e)}")
+            all_passed = False
+        
+        # Test non-existent file
+        try:
+            response = requests.get(f"{self.base_url}/api/download/script/non-existent-id", timeout=10)
+            not_found_handled = response.status_code == 404
+            self.log_test("Non-existent File Handling", not_found_handled,
+                         f"HTTP {response.status_code} (expected 404)")
+            all_passed = all_passed and not_found_handled
+        except Exception as e:
+            self.log_test("Non-existent File Handling", False, f"Error: {str(e)}")
+            all_passed = False
+        
+        return all_passed
+
     def test_download_endpoint(self):
-        """Test /api/download endpoint"""
+        """Test /api/download endpoint - legacy method for compatibility"""
         if not hasattr(self, 'script_id') or not self.script_id:
             return self.log_test("File Download", False, "No script_id available")
             
@@ -215,7 +305,8 @@ class TubeSmithAPITester:
             
             if success:
                 content_length = len(response.content)
-                details = f"Downloaded {content_length} bytes"
+                content_type = response.headers.get('content-type', '')
+                details = f"Downloaded {content_length} bytes, {content_type}"
             else:
                 details = f"HTTP {response.status_code}"
                 
