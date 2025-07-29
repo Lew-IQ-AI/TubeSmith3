@@ -1,0 +1,64 @@
+{
+  "test_type": "focused_backend_review",
+  "timestamp": "2025-07-29T16:00:40.489388",
+  "focus": "timeout_issues_and_api_compatibility",
+  "results": [
+    {
+      "test": "Health Check",
+      "success": true,
+      "details": "Status: healthy, Message: AI YouTube Generator API is running",
+      "duration": 0.10343718528747559,
+      "timestamp": "2025-07-29T15:59:53.027890"
+    },
+    {
+      "test": "OpenAI Integration",
+      "success": true,
+      "details": "OpenAI integration working!",
+      "duration": null,
+      "timestamp": "2025-07-29T15:59:53.816263"
+    },
+    {
+      "test": "ElevenLabs Integration",
+      "success": false,
+      "details": "headers: {'date': 'Tue, 29 Jul 2025 15:59:52 GMT', 'server': 'uvicorn', 'content-length': '141', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=31536000; includeSubDomains', 'x-trace-id': 'b9c79a184d608d312229d78a2cfc8d37', 'x-region': 'us-central1', 'via': '1.1 google, 1.1 google', 'alt-svc': 'h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'missing_permissions', 'message': 'The API key you used is missing the permission voices_read to execute this operation.'}}",
+      "duration": null,
+      "timestamp": "2025-07-29T15:59:53.816280"
+    },
+    {
+      "test": "Pexels Integration",
+      "success": true,
+      "details": "Photos found: 1",
+      "duration": null,
+      "timestamp": "2025-07-29T15:59:53.816286"
+    },
+    {
+      "test": "AI Integrations Overall",
+      "success": true,
+      "details": "OpenAI: success, ElevenLabs: error, Pexels: success",
+      "duration": 0.7869510650634766,
+      "timestamp": "2025-07-29T15:59:53.816296"
+    },
+    {
+      "test": "Script Generation",
+      "success": true,
+      "details": "Script ID: 56a31aaf-52ee-46d7-876d-abf0366c084e, Words: 670, Preview: **[INTRO]**\n\n[UPBEAT MUSIC FADES IN]\n\n**HOST:**  \n[ENCOURAGING TONE] Hey there, space enthusiasts! H...",
+      "duration": 25.847059965133667,
+      "timestamp": "2025-07-29T16:00:19.664800"
+    },
+    {
+      "test": "Thumbnail Generation",
+      "success": true,
+      "details": "Thumbnail ID: dda9d11b-ca84-4f6b-9c2b-04018e3a9c2d, URL available: True",
+      "duration": 20.419750213623047,
+      "timestamp": "2025-07-29T16:00:40.085917"
+    },
+    {
+      "test": "Stock Video Search",
+      "success": true,
+      "details": "Found 8 videos. Sample: ID:1851190, Duration:16s; ID:6961824, Duration:10s; ID:3194277, Duration:28s",
+      "duration": 0.40030455589294434,
+      "timestamp": "2025-07-29T16:00:40.487626"
+    }
+  ],
+  "overall_success": true
+}
