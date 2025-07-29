@@ -386,7 +386,7 @@ def update_video_status(video_id: str, status: str, progress: int = 0, message: 
         print(f"Failed to save status: {e}")
 
 def process_video_background(video_id: str, script_id: str, topic: str):
-    """Background video processing function - simplified and robust"""
+    """Background video processing function - creates actual MP4 video"""
     try:
         print(f"Starting background video processing for {video_id}")
         update_video_status(video_id, "processing", 5, "Starting video assembly...")
@@ -399,81 +399,151 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             update_video_status(video_id, "failed", 0, "", "Required files not found")
             return
         
-        # Get stock videos
-        update_video_status(video_id, "processing", 10, "Getting stock videos...")
+        # Get stock images from Pexels (instead of videos for simplicity)
+        update_video_status(video_id, "processing", 15, "Getting stock images...")
         import requests
         headers = {"Authorization": PEXELS_API_KEY}
-        search_url = f"https://api.pexels.com/videos/search?query={topic}&per_page=3&size=medium"
+        search_url = f"https://api.pexels.com/v1/search?query={topic}&per_page=3&orientation=landscape"
         response = requests.get(search_url, headers=headers, timeout=30)
         
         if response.status_code != 200:
-            update_video_status(video_id, "failed", 0, "", f"Failed to get stock videos: {response.status_code}")
+            update_video_status(video_id, "failed", 0, "", f"Failed to get stock images: {response.status_code}")
             return
         
         data = response.json()
-        videos = []
-        for video in data.get('videos', []):
-            video_files = video.get('video_files', [])
-            medium_quality = next((vf for vf in video_files if vf.get('quality') == 'sd'), video_files[0] if video_files else None)
-            if medium_quality:
-                videos.append({
-                    "id": video['id'],
-                    "url": medium_quality['link'],
-                    "duration": video.get('duration', 0)
-                })
+        images = []
+        for photo in data.get('photos', []):
+            images.append({
+                "id": photo['id'],
+                "url": photo['src']['large'],
+                "photographer": photo.get('photographer', 'Unknown')
+            })
         
-        if not videos:
-            update_video_status(video_id, "failed", 0, "", "No stock videos found")
+        if not images:
+            update_video_status(video_id, "failed", 0, "", "No stock images found")
             return
         
-        # For now, create a simple "video ready" status without actual video processing
-        # This allows the user to download the components and see the interface working
-        update_video_status(video_id, "processing", 50, "Processing video components...")
+        # Download images
+        update_video_status(video_id, "processing", 30, "Downloading images...")
+        image_files = []
         
-        # Load audio to get duration
-        try:
-            audio = AudioFileClip(audio_path)
-            audio_duration = audio.duration
-            audio.close()
-        except Exception as e:
-            print(f"Failed to load audio: {e}")
-            audio_duration = 60  # Default duration
+        for i, image in enumerate(images):
+            try:
+                img_response = requests.get(image["url"], timeout=30)
+                if img_response.status_code == 200:
+                    temp_image_path = f"/tmp/image_{i}_{video_id}.jpg"
+                    with open(temp_image_path, 'wb') as f:
+                        f.write(img_response.content)
+                    image_files.append(temp_image_path)
+                    update_video_status(video_id, "processing", 30 + (i+1)*10, f"Downloaded image {i+1}/3")
+            except Exception as e:
+                print(f"Failed to download image {i}: {str(e)}")
+                continue
         
-        update_video_status(video_id, "processing", 80, "Finalizing video...")
+        if not image_files:
+            update_video_status(video_id, "failed", 0, "", "Failed to download any images")
+            return
         
-        # Create a simple placeholder video file for now
-        # In production, this would be the actual video assembly
+        # Create video using FFmpeg directly (more reliable than MoviePy)
+        update_video_status(video_id, "processing", 70, "Creating video with images and audio...")
+        
         output_path = f"generated_content/videos/{video_id}.mp4"
         
-        # Create a simple text file indicating video is ready
-        # This is a temporary solution until we get full video processing working
         try:
-            with open(output_path, 'w') as f:
-                f.write(f"Video components ready for {topic}\nDuration: {audio_duration}s\nVideos found: {len(videos)}")
+            # Get audio duration
+            import subprocess
+            duration_cmd = [
+                'ffprobe', '-v', 'quiet', '-show_entries', 'format=duration',
+                '-of', 'default=noprint_wrappers=1:nokey=1', audio_path
+            ]
+            duration_result = subprocess.run(duration_cmd, capture_output=True, text=True, timeout=10)
+            audio_duration = float(duration_result.stdout.strip()) if duration_result.stdout.strip() else 60
+            
+            # Calculate how long each image should display
+            image_duration = audio_duration / len(image_files)
+            
+            update_video_status(video_id, "processing", 85, "Assembling final video...")
+            
+            # Create video with FFmpeg
+            ffmpeg_cmd = [
+                'ffmpeg', '-y',  # Overwrite output file
+                '-loop', '1', '-t', str(image_duration), '-i', image_files[0],
+            ]
+            
+            # Add additional images
+            for img_file in image_files[1:]:
+                ffmpeg_cmd.extend(['-loop', '1', '-t', str(image_duration), '-i', img_file])
+            
+            # Add audio
+            ffmpeg_cmd.extend(['-i', audio_path])
+            
+            # Set output options
+            ffmpeg_cmd.extend([
+                '-filter_complex', f'{"".join([f"[{i}:v]scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:-1:-1,setpts=PTS-STARTPTS+{i*image_duration}/TB[v{i}];" for i in range(len(image_files))])}{"".join([f"[v{i}]" for i in range(len(image_files))])}concat=n={len(image_files)}:v=1[outv]',
+                '-map', '[outv]', '-map', f'{len(image_files)}:a',
+                '-c:v', 'libx264', '-c:a', 'aac',
+                '-shortest', '-r', '30',
+                output_path
+            ])
+            
+            update_video_status(video_id, "processing", 95, "Rendering final video...")
+            
+            # Run FFmpeg
+            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=300)
+            
+            if result.returncode != 0:
+                print(f"FFmpeg error: {result.stderr}")
+                # Fallback: create simple video with first image
+                simple_cmd = [
+                    'ffmpeg', '-y', '-loop', '1', '-i', image_files[0], '-i', audio_path,
+                    '-c:v', 'libx264', '-c:a', 'aac', '-shortest', '-r', '30',
+                    '-vf', 'scale=1280:720', output_path
+                ]
+                subprocess.run(simple_cmd, capture_output=True, timeout=180)
+            
         except Exception as e:
-            print(f"Failed to create placeholder: {e}")
+            print(f"Video creation failed: {e}")
+            # Create a very simple video as last resort
+            try:
+                simple_cmd = [
+                    'ffmpeg', '-y', '-loop', '1', '-i', image_files[0], '-i', audio_path,
+                    '-c:v', 'libx264', '-c:a', 'aac', '-shortest', '-t', '60',
+                    '-vf', 'scale=1280:720', output_path
+                ]
+                subprocess.run(simple_cmd, capture_output=True, timeout=120)
+            except:
+                update_video_status(video_id, "failed", 0, "", "Video creation failed")
+                return
         
-        update_video_status(video_id, "processing", 95, "Video assembly complete...")
+        # Clean up temp files
+        for temp_file in image_files:
+            try:
+                os.remove(temp_file)
+            except:
+                pass
         
         # Get file size
         try:
             file_size = os.path.getsize(output_path)
+            if file_size < 1000:  # If file is too small, it probably failed
+                update_video_status(video_id, "failed", 0, "", "Video file too small - creation may have failed")
+                return
         except:
-            file_size = 1024
+            update_video_status(video_id, "failed", 0, "", "Video file not created")
+            return
         
         # Mark as completed
-        update_video_status(video_id, "completed", 100, "Video components ready for download!")
+        update_video_status(video_id, "completed", 100, "Video ready for download!")
         
         # Update final result
         video_status[video_id].update({
             "video_path": output_path,
             "duration": audio_duration,
             "file_size": file_size,
-            "clips_used": len(videos),
-            "note": "This is a working prototype. Video components are ready for manual assembly or download."
+            "clips_used": len(images)
         })
         
-        print(f"Video processing completed: {video_id}")
+        print(f"Video creation completed: {video_id}, size: {file_size} bytes")
         
     except Exception as e:
         print(f"Video processing failed: {str(e)}")
