@@ -389,7 +389,6 @@ def update_video_status(video_id: str, status: str, progress: int = 0, message: 
 
 def process_video_background(video_id: str, script_id: str, topic: str):
     """Background video processing function - creates actual MP4 video from thumbnail + audio"""
-    import time  # Import at function level to ensure availability
     try:
         print(f"Starting background video processing for {video_id}")
         update_video_status(video_id, "processing", 10, "Starting video assembly...")
