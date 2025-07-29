@@ -418,7 +418,7 @@ def process_video_background(video_id: str, script_id: str, topic: str):
         # Get audio duration using a simple approach
         try:
             import subprocess
-            duration_cmd = ['ffprobe', '-v', 'quiet', '-show_entries', 'format=duration', 
+            duration_cmd = ['/usr/bin/ffprobe', '-v', 'quiet', '-show_entries', 'format=duration', 
                           '-of', 'default=noprint_wrappers=1:nokey=1', audio_path]
             duration_result = subprocess.run(duration_cmd, capture_output=True, text=True, timeout=10)
             audio_duration = float(duration_result.stdout.strip()) if duration_result.stdout.strip() else 60.0
