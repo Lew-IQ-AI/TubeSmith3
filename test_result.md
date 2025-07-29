@@ -286,17 +286,20 @@ frontend:
         agent: "testing"
         comment: "PROGRESS INDICATORS VERIFIED: Tested with multiple topics and confirmed progress tracking works consistently. Shows real-time updates during script generation process. Animated progress bar displays correctly during generation. Progress messages update appropriately for each generation step."
 
-  - task: "Responsive Design"
+  - task: "Video Preview & Playback Modal"
     implemented: true
     working: true
     file: "App.js"
-    stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
     status_history:
+      - working: false
+        agent: "main"
+        comment: "Video preview modal showing 'nothing to play' or 0:00 duration due to backend status issues"
       - working: true
         agent: "main"
-        comment: "Tailwind CSS responsive design with gradient background and modern UI"
+        comment: "FIXED: Improved status polling logic, added file existence checks for failed states, enhanced video object structure with proper video_id, duration, and file_size. Modal should now properly load and play assembled MP4 videos."
 
 metadata:
   created_by: "main_agent"
