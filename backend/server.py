@@ -295,31 +295,34 @@ async def get_stock_videos(request: dict):
         raise HTTPException(status_code=500, detail=f"Stock video search failed: {str(e)}")
 
 @app.post("/api/generate-youtube-metadata")
-async def generate_youtube_metadata(topic: str, script_content: str = ""):
+async def generate_youtube_metadata(request: dict):
     """Generate YouTube title, description, and tags"""
     try:
+        topic = request.get("topic", "")
+        script_content = request.get("script_content", "")
+        
         prompt = f"""
         Create optimized YouTube metadata for a video about "{topic}".
         
         Generate:
-        1. 5 high-CTR title variations (60 characters max each)
-        2. A detailed description (250+ words) with:
+        1. 3 high-CTR title variations (60 characters max each)
+        2. A detailed description (200+ words) with:
            - Engaging opening
            - Key points covered
            - Relevant hashtags
            - Call to action
-           - Timestamp chapters if script provided
-        3. 15-20 relevant tags for YouTube SEO
+        3. 10-15 relevant tags for YouTube SEO
         
         Make it optimized for YouTube algorithm and high engagement.
         Script preview: {script_content[:200]}...
         """
         
         response = openai_client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=1000,
-            temperature=0.7
+            max_tokens=800,
+            temperature=0.7,
+            timeout=30
         )
         
         metadata = response.choices[0].message.content
@@ -330,6 +333,10 @@ async def generate_youtube_metadata(topic: str, script_content: str = ""):
             "generated_at": str(uuid.uuid4())
         }
         
+    except openai.APITimeoutError:
+        raise HTTPException(status_code=408, detail="Metadata generation timed out. Please try again.")
+    except openai.APIError as e:
+        raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Metadata generation failed: {str(e)}")
 
