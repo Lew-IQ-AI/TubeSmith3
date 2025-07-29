@@ -1,0 +1,56 @@
+{
+  "timestamp": "2025-07-29T13:35:20.115203",
+  "total_tests": 8,
+  "passed_tests": 0,
+  "success_rate": 0.0,
+  "results": [
+    {
+      "name": "Health Check",
+      "success": false,
+      "details": "HTTP 502",
+      "timestamp": "2025-07-29T13:35:09.979989"
+    },
+    {
+      "name": "AI Integrations Test",
+      "success": false,
+      "details": "HTTP 502",
+      "timestamp": "2025-07-29T13:35:09.996816"
+    },
+    {
+      "name": "Script Generation",
+      "success": false,
+      "details": "HTTP 502",
+      "timestamp": "2025-07-29T13:35:10.022534"
+    },
+    {
+      "name": "Voice Generation",
+      "success": false,
+      "details": "No script_id available",
+      "timestamp": "2025-07-29T13:35:12.022953"
+    },
+    {
+      "name": "Thumbnail Generation",
+      "success": false,
+      "details": "HTTP 502",
+      "timestamp": "2025-07-29T13:35:14.043738"
+    },
+    {
+      "name": "Stock Videos Search",
+      "success": false,
+      "details": "HTTP 502",
+      "timestamp": "2025-07-29T13:35:16.093399"
+    },
+    {
+      "name": "YouTube Metadata Generation",
+      "success": false,
+      "details": "HTTP 502",
+      "timestamp": "2025-07-29T13:35:18.114593"
+    },
+    {
+      "name": "File Download",
+      "success": false,
+      "details": "No script_id available",
+      "timestamp": "2025-07-29T13:35:20.114987"
+    }
+  ]
+}
