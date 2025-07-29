@@ -229,6 +229,17 @@ function App() {
     setIsGenerating(true);
     setCurrentStep('Starting AI video generation...');
     
+    // CRITICAL: Clear all previous state to prevent persistent error messages
+    setVideoProcessingStatus(null);
+    setGeneratedContent({
+      script: null,
+      audio: null,
+      thumbnail: null,
+      videos: null,
+      video: null,
+      metadata: null
+    });
+    
     try {
       // Step 1: Generate script
       const scriptId = await generateScript();
