@@ -446,8 +446,8 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             
             update_video_status(video_id, "processing", 80, "Rendering final video...")
             
-            # Run FFmpeg with timeout
-            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=120)
+            # Run FFmpeg with timeout (5 minutes should be more than enough)
+            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=300)
             
             print(f"FFmpeg completed with return code: {result.returncode}")
             if result.stdout:
