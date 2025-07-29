@@ -420,9 +420,12 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             import subprocess
             duration_cmd = ['/usr/bin/ffprobe', '-v', 'quiet', '-show_entries', 'format=duration', 
                           '-of', 'default=noprint_wrappers=1:nokey=1', audio_path]
-            duration_result = subprocess.run(duration_cmd, capture_output=True, text=True, timeout=10)
+            print(f"Getting audio duration with command: {' '.join(duration_cmd)}")
+            duration_result = subprocess.run(duration_cmd, capture_output=True, text=True, timeout=10, cwd="/app/backend")
+            print(f"FFprobe result: stdout='{duration_result.stdout}', stderr='{duration_result.stderr}', returncode={duration_result.returncode}")
             audio_duration = float(duration_result.stdout.strip()) if duration_result.stdout.strip() else 60.0
-        except:
+        except Exception as e:
+            print(f"Error getting audio duration: {e}")
             # Fallback: assume reasonable duration
             audio_duration = 60.0
         
