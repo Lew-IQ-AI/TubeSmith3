@@ -61,7 +61,7 @@ function App() {
       const response = await fetch(`${BACKEND_URL}/api/generate-script`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, duration_minutes: 12 }),
+        body: JSON.stringify({ topic, duration_minutes: videoLength }),
         signal: controller.signal
       });
       
