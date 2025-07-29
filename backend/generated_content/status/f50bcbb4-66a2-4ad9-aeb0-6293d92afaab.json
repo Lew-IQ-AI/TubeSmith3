@@ -1,1 +1,1 @@
-{"status": "completed", "progress": 100, "message": "Video ready for download!", "error": "", "timestamp": 1753820853.6857502}
+{"status": "failed", "progress": 0, "message": "", "error": "Video rendering timed out", "timestamp": 1753820939.7631116}
