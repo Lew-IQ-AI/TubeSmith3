@@ -451,10 +451,15 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             
             update_video_status(video_id, "processing", 80, "Rendering final video...")
             
+            print(f"Starting FFmpeg with command: {' '.join(ffmpeg_cmd)}")
+            start_time = time.time()
+            
             # Run FFmpeg with reasonable timeout for static image + audio (should complete in under 30 seconds)
             result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=60)
             
-            print(f"FFmpeg completed with return code: {result.returncode}")
+            end_time = time.time()
+            processing_time = end_time - start_time
+            print(f"FFmpeg completed in {processing_time:.2f} seconds with return code: {result.returncode}")
             if result.stdout:
                 print(f"FFmpeg stdout: {result.stdout}")
             if result.stderr:
