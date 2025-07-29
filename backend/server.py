@@ -148,9 +148,13 @@ async def generate_script(request: VideoRequest):
         raise HTTPException(status_code=500, detail=f"Script generation failed: {str(e)}")
 
 @app.post("/api/generate-voice")
-async def generate_voice(script_id: str):
+async def generate_voice(request: dict):
     """Convert script to voice using ElevenLabs"""
     try:
+        script_id = request.get("script_id")
+        if not script_id:
+            raise HTTPException(status_code=400, detail="script_id is required")
+            
         # Read script file
         script_path = f"generated_content/scripts/{script_id}.txt"
         if not os.path.exists(script_path):
