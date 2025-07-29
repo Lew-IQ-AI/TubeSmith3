@@ -116,6 +116,9 @@ backend:
       - working: true
         agent: "main"
         comment: "OpenAI GPT-4 integration for generating YouTube scripts - working with API key configured"
+      - working: true
+        agent: "testing"
+        comment: "Tested script generation with 'space exploration' topic. Generated 670-word script in 25.85s. Timeout issues resolved - well under 1 minute completion time. Using gpt-4o-mini model with 60s timeout and 1500 max tokens for optimal performance."
 
   - task: "AI Voice Generation API"
     implemented: true
