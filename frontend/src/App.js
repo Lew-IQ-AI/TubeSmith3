@@ -796,6 +796,7 @@ function App() {
                       {/* Direct download link for stuck videos */}
                       <button
                         onClick={() => {
+                          alert('Download button clicked!'); // DEBUG: Test if function is called
                           if (videoProcessingStatus?.video_id) {
                             const videoId = videoProcessingStatus.video_id;
                             downloadFile('video', videoId, getFilename('video', topic));
