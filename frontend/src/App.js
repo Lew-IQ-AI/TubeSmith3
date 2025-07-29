@@ -263,23 +263,23 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      {/* Header */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-pink-400 to-violet-400 bg-clip-text text-transparent">
+      {/* Header - Compact */}
+      <div className="container mx-auto px-4 py-4">
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-pink-400 to-violet-400 bg-clip-text text-transparent">
             🔨 TubeSmith
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-300">
             Craft viral YouTube videos with AI - Transform any topic into professional content
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          {/* Main Input Section */}
-          <div className="bg-black/30 backdrop-blur-sm rounded-xl p-8 mb-8 border border-gray-700">
+        <div className="max-w-3xl mx-auto">
+          {/* Main Input Section - Compact */}
+          <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 mb-6 border border-gray-700">
             {/* Topic Input */}
-            <div className="mb-6">
-              <label className="block text-white text-lg font-semibold mb-4">
+            <div className="mb-4">
+              <label className="block text-white text-base font-semibold mb-2">
                 📝 Enter Your Video Topic
               </label>
               <input
@@ -287,20 +287,20 @@ function App() {
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder="e.g., 'AI revolution', 'space exploration'..."
-                className="w-full p-4 text-lg rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-purple-500 focus:outline-none"
+                className="w-full p-3 text-base rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-purple-500 focus:outline-none"
                 disabled={isGenerating}
               />
             </div>
 
             {/* Video Length Selector */}
-            <div className="mb-6">
-              <label className="block text-white text-lg font-semibold mb-4">
+            <div className="mb-4">
+              <label className="block text-white text-base font-semibold mb-2">
                 ⏱️ Video Length (minutes)
               </label>
               <select
                 value={videoLength}
                 onChange={(e) => setVideoLength(parseInt(e.target.value))}
-                className="w-full p-4 text-lg rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-purple-500 focus:outline-none appearance-none"
+                className="w-full p-3 text-base rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-purple-500 focus:outline-none appearance-none"
                 disabled={isGenerating}
               >
                 <option value={1}>1 (~150 words needed)</option>
@@ -315,37 +315,37 @@ function App() {
             <button
               onClick={generateFullVideo}
               disabled={isGenerating || !topic.trim()}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-lg text-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {isGenerating ? '🚀 Generating...' : `🎬 Create ${videoLength}-Min AI Video`}
             </button>
           </div>
 
-          {/* Progress Display */}
+          {/* Progress Display - Compact */}
           {currentStep && (
-            <div className="bg-blue-900/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-blue-700">
+            <div className="bg-blue-900/30 backdrop-blur-sm rounded-xl p-4 mb-6 border border-blue-700">
               <div className="text-center">
-                <p className="text-blue-300 text-lg font-semibold">{currentStep}</p>
+                <p className="text-blue-300 text-base font-semibold">{currentStep}</p>
                 {isGenerating && (
-                  <div className="mt-4 w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full animate-pulse"></div>
+                  <div className="mt-2 w-full bg-gray-700 rounded-full h-1">
+                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1 rounded-full animate-pulse"></div>
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Generated Content Cards - 2x2 Grid */}
-          <div className="grid grid-cols-2 gap-6 mb-8">
+          {/* Generated Content Cards - 2x2 Grid - Compact */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
             
             {/* Script Card */}
-            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700 ${generatedContent.script ? '' : 'opacity-50'}`}>
-              <h3 className="text-white text-lg font-semibold mb-2 flex items-center justify-center">
+            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700 ${generatedContent.script ? '' : 'opacity-50'}`}>
+              <h3 className="text-white text-base font-semibold mb-1 flex items-center justify-center">
                 {generatedContent.script ? '✅' : '⏳'} Script
               </h3>
               {generatedContent.script ? (
                 <>
-                  <p className="text-green-300 text-sm text-center mb-2">{generatedContent.script.word_count} words</p>
+                  <p className="text-green-300 text-sm text-center mb-1">{generatedContent.script.word_count} words</p>
                   <p className="text-green-200 text-xs text-center">✓ Good length</p>
                 </>
               ) : (
@@ -354,13 +354,13 @@ function App() {
             </div>
 
             {/* Voice Card */}
-            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700 ${generatedContent.audio ? '' : 'opacity-50'}`}>
-              <h3 className="text-white text-lg font-semibold mb-2 flex items-center justify-center">
+            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700 ${generatedContent.audio ? '' : 'opacity-50'}`}>
+              <h3 className="text-white text-base font-semibold mb-1 flex items-center justify-center">
                 {generatedContent.audio ? '✅' : '⏳'} Voice
               </h3>
               {generatedContent.audio ? (
                 <>
-                  <p className="text-green-300 text-sm text-center mb-2">ElevenLabs AI</p>
+                  <p className="text-green-300 text-sm text-center mb-1">ElevenLabs AI</p>
                   <p className="text-green-200 text-xs text-center">Click for MP3</p>
                 </>
               ) : (
@@ -369,20 +369,20 @@ function App() {
             </div>
 
             {/* Thumbnail Card */}
-            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700 ${generatedContent.thumbnail ? '' : 'opacity-50'}`}>
-              <h3 className="text-white text-lg font-semibold mb-2 flex items-center justify-center">
+            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700 ${generatedContent.thumbnail ? '' : 'opacity-50'}`}>
+              <h3 className="text-white text-base font-semibold mb-1 flex items-center justify-center">
                 {generatedContent.thumbnail ? '✅' : '⏳'} Thumbnail
               </h3>
               {generatedContent.thumbnail ? (
                 <>
-                  <div className="mb-2">
+                  <div className="mb-1">
                     <img 
                       src={`${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
                       alt="Generated thumbnail"
-                      className="w-full h-20 object-cover rounded mx-auto"
+                      className="w-full h-16 object-cover rounded mx-auto"
                     />
                   </div>
-                  <p className="text-green-300 text-sm text-center mb-2">DALL-E 3</p>
+                  <p className="text-green-300 text-sm text-center mb-1">DALL-E 3</p>
                   <p className="text-green-200 text-xs text-center">Click for PNG</p>
                 </>
               ) : (
@@ -391,13 +391,13 @@ function App() {
             </div>
 
             {/* Videos Card */}
-            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700 ${generatedContent.videos ? '' : 'opacity-50'}`}>
-              <h3 className="text-white text-lg font-semibold mb-2 flex items-center justify-center">
+            <div className={`bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700 ${generatedContent.videos ? '' : 'opacity-50'}`}>
+              <h3 className="text-white text-base font-semibold mb-1 flex items-center justify-center">
                 {generatedContent.videos ? '✅' : '⏳'} Videos
               </h3>
               {generatedContent.videos ? (
                 <>
-                  <p className="text-green-300 text-sm text-center mb-2">{generatedContent.videos.total_found} clips</p>
+                  <p className="text-green-300 text-sm text-center mb-1">{generatedContent.videos.total_found} clips</p>
                   <p className="text-green-200 text-xs text-center">HD quality stock footage</p>
                 </>
               ) : (
@@ -406,45 +406,17 @@ function App() {
             </div>
           </div>
 
-          {/* Integration Test Button */}
-          <div className="text-center mb-8">
-            <button
-              onClick={testIntegrations}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition-all"
-            >
-              🔧 Test AI Integrations
-            </button>
-          </div>
-
-          {/* Test Results Display */}
-          {testResults && (
-            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-gray-700">
-              <h3 className="text-white text-xl font-semibold mb-4">🧪 Integration Test Results</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {Object.entries(testResults).map(([service, result]) => (
-                  <div key={service} className={`p-4 rounded-lg ${result.status === 'success' ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
-                    <h4 className="font-semibold text-white capitalize">{service}</h4>
-                    <p className={`text-sm ${result.status === 'success' ? 'text-green-300' : 'text-red-300'}`}>
-                      {result.status === 'success' ? '✅ Working' : '❌ Error'}
-                    </p>
-                    {result.error && <p className="text-xs text-red-200 mt-1">{result.error}</p>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Quick Downloads - appears when content is ready */}
+          {/* Quick Downloads - appears when content is ready - Compact */}
           {(generatedContent.script || generatedContent.audio || generatedContent.thumbnail) && (
-            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-gray-700">
-              <h3 className="text-white text-xl font-semibold mb-4 flex items-center justify-center">
+            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4 mb-4 border border-gray-700">
+              <h3 className="text-white text-lg font-semibold mb-3 flex items-center justify-center">
                 📥 Quick Downloads
               </h3>
-              <div className="flex justify-center gap-4">
+              <div className="flex justify-center gap-3">
                 {generatedContent.script && (
                   <button
                     onClick={() => downloadFile('script', generatedContent.script.script_id)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all flex items-center gap-2"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all flex items-center gap-2"
                   >
                     📄 TXT
                   </button>
@@ -452,7 +424,7 @@ function App() {
                 {generatedContent.audio && (
                   <button
                     onClick={() => downloadFile('audio', generatedContent.audio.script_id)}
-                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all flex items-center gap-2"
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-all flex items-center gap-2"
                   >
                     🎵 MP3
                   </button>
@@ -460,7 +432,7 @@ function App() {
                 {generatedContent.thumbnail && (
                   <button
                     onClick={() => downloadFile('thumbnail', generatedContent.thumbnail.thumbnail_id)}
-                    className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all flex items-center gap-2"
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-all flex items-center gap-2"
                   >
                     🖼️ PNG
                   </button>
@@ -469,20 +441,47 @@ function App() {
             </div>
           )}
 
-          {/* Completion Message */}
+          {/* Completion Message - Compact */}
           {generatedContent.script && generatedContent.audio && generatedContent.thumbnail && generatedContent.videos && (
-            <div className="bg-green-900/30 backdrop-blur-sm rounded-xl p-6 border border-green-700">
+            <div className="bg-green-900/30 backdrop-blur-sm rounded-xl p-4 border border-green-700 mb-4">
               <div className="text-center">
-                <p className="text-green-300 text-xl font-semibold">✅ Complete YouTube video ready!</p>
-                <p className="text-green-200 text-sm mt-2">Combining audio, visuals, and effects</p>
+                <p className="text-green-300 text-lg font-semibold">✅ Complete YouTube video ready!</p>
+                <p className="text-green-200 text-sm mt-1">Combining audio, visuals, and effects</p>
+              </div>
+            </div>
+          )}
+
+          {/* Integration Test Button - Compact */}
+          <div className="text-center mb-4">
+            <button
+              onClick={testIntegrations}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"
+            >
+              🔧 Test AI Integrations
+            </button>
+          </div>
+
+          {/* Test Results Display - Compact */}
+          {testResults && (
+            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4 mb-4 border border-gray-700">
+              <h3 className="text-white text-base font-semibold mb-3">🧪 Integration Test Results</h3>
+              <div className="grid grid-cols-3 gap-2">
+                {Object.entries(testResults).map(([service, result]) => (
+                  <div key={service} className={`p-2 rounded-lg ${result.status === 'success' ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
+                    <h4 className="font-semibold text-white capitalize text-sm">{service}</h4>
+                    <p className={`text-xs ${result.status === 'success' ? 'text-green-300' : 'text-red-300'}`}>
+                      {result.status === 'success' ? '✅ Working' : '❌ Error'}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-12 text-gray-400">
-          <p>🚀 Powered by OpenAI GPT-4, ElevenLabs, DALL-E & Pexels</p>
+        {/* Footer - Compact */}
+        <div className="text-center mt-4 text-gray-400">
+          <p className="text-sm">🚀 Powered by OpenAI GPT-4, ElevenLabs, DALL-E & Pexels</p>
         </div>
       </div>
     </div>
