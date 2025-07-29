@@ -162,10 +162,12 @@ async def generate_voice(script_id: str):
         # Clean script for voice synthesis (remove markers)
         clean_script = script_content.replace('[TIMESTAMP:', '').replace('[PAUSE]', '... ').replace('[EMPHASIS]', '').replace(']', '')
         
-        # Generate voice using ElevenLabs
-        audio = elevenlabs_client.generate(
+        # Generate voice using ElevenLabs with text-to-speech
+        audio = elevenlabs_client.text_to_speech.convert(
+            voice_id="pNInz6obpgDQGcFmaJgB",  # Adam voice ID
+            optimize_streaming_latency="0",
+            output_format="mp3_22050_32",
             text=clean_script,
-            voice="Rachel",  # You can change this to different voices
             voice_settings=VoiceSettings(
                 stability=0.71,
                 similarity_boost=0.5,
