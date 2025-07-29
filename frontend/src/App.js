@@ -392,6 +392,12 @@ function App() {
                     controls
                     className="w-full h-48 object-cover"
                     poster={generatedContent.thumbnail.image_url || `${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
+                    onError={(e) => {
+                      console.error('Video failed to load:', e.target.src);
+                    }}
+                    onLoadedMetadata={(e) => {
+                      console.log('Video loaded successfully, duration:', e.target.duration);
+                    }}
                   >
                     <source 
                       src={`${BACKEND_URL}/api/download/video/${generatedContent.video.video_id}`}
@@ -430,7 +436,7 @@ function App() {
                 <div>
                   <span className="text-gray-400">Duration:</span>
                   <span className="text-white ml-2">
-                    {generatedContent.video ? 
+                    {generatedContent.video && generatedContent.video.duration && !isNaN(generatedContent.video.duration) ? 
                       `${Math.round(generatedContent.video.duration)}s` : 
                       'Processing...'
                     }
@@ -452,13 +458,18 @@ function App() {
                 <div>
                   <span className="text-gray-400">Size:</span>
                   <span className="text-white ml-2">
-                    {generatedContent.video ? 
+                    {generatedContent.video && generatedContent.video.file_size ? 
                       `${(generatedContent.video.file_size / 1024 / 1024).toFixed(1)}MB` : 
                       'Processing...'
                     }
                   </span>
                 </div>
               </div>
+              {generatedContent.video && (
+                <div className="mt-2 text-xs text-gray-400">
+                  Video ID: {generatedContent.video.video_id}
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}
