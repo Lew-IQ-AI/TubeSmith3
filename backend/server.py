@@ -365,8 +365,14 @@ async def generate_youtube_metadata(request: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Metadata generation failed: {str(e)}")
 
-# Video processing status tracking
+# Video processing status tracking - clear on startup
 video_status = {}
+
+def clear_video_status():
+    """Clear all video status on startup"""
+    global video_status
+    video_status = {}
+    print("Video status cache cleared on startup")
 
 def update_video_status(video_id: str, status: str, progress: int = 0, message: str = "", error: str = ""):
     """Update video processing status"""
