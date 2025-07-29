@@ -102,18 +102,31 @@ function App() {
   const generateThumbnail = async () => {
     try {
       setCurrentStep('Creating AI thumbnail...');
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 90000); // 1.5 minutes timeout
+      
       const response = await fetch(`${BACKEND_URL}/api/generate-thumbnail`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic })
+        body: JSON.stringify({ topic }),
+        signal: controller.signal
       });
       
-      if (!response.ok) throw new Error('Thumbnail generation failed');
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Thumbnail generation failed: ${errorData}`);
+      }
       
       const result = await response.json();
       setGeneratedContent(prev => ({ ...prev, thumbnail: result }));
       return result;
     } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Thumbnail generation timed out. Please try again.');
+      }
       console.error('Thumbnail generation failed:', error);
       throw error;
     }
