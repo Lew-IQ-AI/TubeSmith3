@@ -344,7 +344,8 @@ class TubeSmithAPITester:
         
         # File operations tests
         print("\n📁 File Operations Tests:")
-        self.test_download_endpoint()
+        self.test_download_endpoints_comprehensive()
+        self.test_download_endpoint()  # Legacy test for newly generated files
         
         # Print summary
         print("\n" + "=" * 60)
