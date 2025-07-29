@@ -1,110 +1,110 @@
 {
-  "timestamp": "2025-07-29T22:27:30.739074",
+  "timestamp": "2025-07-29T22:30:39.681070",
   "total_tests": 17,
-  "passed_tests": 14,
-  "success_rate": 0.8235294117647058,
+  "passed_tests": 17,
+  "success_rate": 1.0,
   "results": [
     {
       "name": "Health Check",
       "success": true,
       "details": "Status: healthy, Message: AI YouTube Generator API is running",
-      "timestamp": "2025-07-29T22:25:39.488484"
+      "timestamp": "2025-07-29T22:28:45.336872"
     },
     {
       "name": "OpenAI Integration",
       "success": true,
       "details": "Working",
-      "timestamp": "2025-07-29T22:25:41.407779"
+      "timestamp": "2025-07-29T22:28:47.723902"
     },
     {
       "name": "ElevenLabs Integration",
       "success": true,
       "details": "Working",
-      "timestamp": "2025-07-29T22:25:41.407794"
+      "timestamp": "2025-07-29T22:28:47.723916"
     },
     {
       "name": "Pexels Integration",
       "success": true,
       "details": "Working",
-      "timestamp": "2025-07-29T22:25:41.407799"
+      "timestamp": "2025-07-29T22:28:47.723921"
     },
     {
       "name": "AI Integrations Test",
       "success": true,
       "details": "OpenAI: success, ElevenLabs: success, Pexels: success",
-      "timestamp": "2025-07-29T22:25:41.407804"
+      "timestamp": "2025-07-29T22:28:47.723927"
     },
     {
       "name": "Script Generation",
       "success": true,
-      "details": "Script ID: 453577ab-c103-44ba-b2b1-c5ce10b5e39f, Words: 691",
-      "timestamp": "2025-07-29T22:25:58.506424"
+      "details": "Script ID: bbb8c8eb-b6d2-40e4-b8b1-b4200948177a, Words: 726",
+      "timestamp": "2025-07-29T22:29:05.493919"
     },
     {
       "name": "Voice Generation",
       "success": true,
-      "details": "Audio: generated_content/audio/453577ab-c103-44ba-b2b1-c5ce10b5e39f.mp3",
-      "timestamp": "2025-07-29T22:26:54.706141"
+      "details": "Audio: generated_content/audio/bbb8c8eb-b6d2-40e4-b8b1-b4200948177a.mp3",
+      "timestamp": "2025-07-29T22:30:02.049518"
     },
     {
       "name": "Thumbnail Generation",
       "success": true,
-      "details": "Thumbnail ID: e11fcb73-61d0-4b7f-9937-ec5b7aefc574",
-      "timestamp": "2025-07-29T22:27:15.509479"
+      "details": "Thumbnail ID: fd2968ea-2011-4bcc-80f7-5040f676711e",
+      "timestamp": "2025-07-29T22:30:21.849201"
     },
     {
       "name": "Stock Videos Search",
       "success": true,
       "details": "Videos found: 5",
-      "timestamp": "2025-07-29T22:27:17.901333"
+      "timestamp": "2025-07-29T22:30:24.229961"
     },
     {
       "name": "YouTube Metadata Generation",
       "success": true,
-      "details": "Metadata generated: aba91086-7006-4ced-a231-75095cddcdb0",
-      "timestamp": "2025-07-29T22:27:28.252472"
+      "details": "Metadata generated: 3d11a1e0-7f98-4d02-9cfc-47f62cfe1492",
+      "timestamp": "2025-07-29T22:30:35.216014"
     },
     {
       "name": "Download Script",
-      "success": false,
-      "details": "HTTP 500",
-      "timestamp": "2025-07-29T22:27:30.350885"
+      "success": true,
+      "details": "\u2705 1169 bytes, text/plain; charset=utf-8",
+      "timestamp": "2025-07-29T22:30:39.320629"
     },
     {
       "name": "Download Audio",
       "success": true,
       "details": "\u2705 383105 bytes, audio/mpeg",
-      "timestamp": "2025-07-29T22:27:30.421243"
+      "timestamp": "2025-07-29T22:30:39.377217"
     },
     {
       "name": "Download Thumbnail",
       "success": true,
       "details": "\u2705 2783937 bytes, image/png",
-      "timestamp": "2025-07-29T22:27:30.497034"
+      "timestamp": "2025-07-29T22:30:39.454099"
     },
     {
       "name": "Download Video",
       "success": true,
       "details": "\u2705 1422790 bytes, video/mp4",
-      "timestamp": "2025-07-29T22:27:30.569742"
+      "timestamp": "2025-07-29T22:30:39.524453"
     },
     {
       "name": "Invalid File Type Handling",
-      "success": false,
-      "details": "HTTP 500 (expected 400)",
-      "timestamp": "2025-07-29T22:27:30.626293"
+      "success": true,
+      "details": "HTTP 400 (expected 400)",
+      "timestamp": "2025-07-29T22:30:39.577020"
     },
     {
       "name": "Non-existent File Handling",
-      "success": false,
-      "details": "HTTP 500 (expected 404)",
-      "timestamp": "2025-07-29T22:27:30.683412"
+      "success": true,
+      "details": "HTTP 404 (expected 404)",
+      "timestamp": "2025-07-29T22:30:39.629703"
     },
     {
       "name": "File Download",
       "success": true,
-      "details": "Downloaded 4746 bytes, text/plain; charset=utf-8",
-      "timestamp": "2025-07-29T22:27:30.737409"
+      "details": "Downloaded 4882 bytes, text/plain; charset=utf-8",
+      "timestamp": "2025-07-29T22:30:39.679496"
     }
   ]
 }
