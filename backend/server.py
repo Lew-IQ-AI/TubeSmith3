@@ -467,9 +467,9 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             processing_time = end_time - start_time
             print(f"FFmpeg completed in {processing_time:.2f} seconds with return code: {result.returncode}")
             if result.stdout:
-                print(f"FFmpeg stdout: {result.stdout}")
+                print(f"FFmpeg stdout: {result.stdout[:200]}...")
             if result.stderr:
-                print(f"FFmpeg stderr: {result.stderr}")
+                print(f"FFmpeg stderr: {result.stderr[:200]}...")
             
             if result.returncode != 0:
                 print(f"FFmpeg failed with error: {result.stderr}")
