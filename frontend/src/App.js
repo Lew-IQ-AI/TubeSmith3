@@ -682,7 +682,11 @@ function App() {
 
               {/* Content Cards - 2x2 Grid */}
               <div className="grid grid-cols-2 gap-2">
-                <div className={`bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700 text-center ${generatedContent.script ? '' : 'opacity-50'}`}>
+                <div 
+                  className={`bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700 text-center transition-all ${generatedContent.script ? 'cursor-pointer hover:bg-black/40 hover:border-purple-500' : 'opacity-50'}`}
+                  onClick={() => generatedContent.script && downloadFile('script', generatedContent.script.script_id, getFilename('script', topic))}
+                  title={generatedContent.script ? 'Click to download script' : 'Script not ready'}
+                >
                   <div className="text-xs font-semibold text-white mb-1">
                     {generatedContent.script ? '✅' : '⏳'} Script
                   </div>
@@ -693,7 +697,11 @@ function App() {
                   )}
                 </div>
 
-                <div className={`bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700 text-center ${generatedContent.audio ? '' : 'opacity-50'}`}>
+                <div 
+                  className={`bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700 text-center transition-all ${generatedContent.audio ? 'cursor-pointer hover:bg-black/40 hover:border-purple-500' : 'opacity-50'}`}
+                  onClick={() => generatedContent.audio && downloadFile('audio', generatedContent.audio.script_id, getFilename('audio', topic))}
+                  title={generatedContent.audio ? 'Click to download voiceover MP3' : 'Voiceover not ready'}
+                >
                   <div className="text-xs font-semibold text-white mb-1">
                     {generatedContent.audio ? '✅' : '⏳'} Voice
                   </div>
@@ -704,7 +712,11 @@ function App() {
                   )}
                 </div>
 
-                <div className={`bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700 text-center ${generatedContent.thumbnail ? '' : 'opacity-50'}`}>
+                <div 
+                  className={`bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700 text-center transition-all ${generatedContent.thumbnail ? 'cursor-pointer hover:bg-black/40 hover:border-purple-500' : 'opacity-50'}`}
+                  onClick={() => generatedContent.thumbnail && downloadFile('thumbnail', generatedContent.thumbnail.thumbnail_id, getFilename('thumbnail', topic))}
+                  title={generatedContent.thumbnail ? 'Click to download thumbnail image' : 'Thumbnail not ready'}
+                >
                   <div className="text-xs font-semibold text-white mb-1">
                     {generatedContent.thumbnail ? '✅' : '⏳'} Thumbnail
                   </div>
