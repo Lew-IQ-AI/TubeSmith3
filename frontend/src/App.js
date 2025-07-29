@@ -836,6 +836,34 @@ function App() {
                 </button>
               </div>
 
+              {/* Manual Video Download - For accessing completed videos */}
+              <div className="bg-gray-800/30 backdrop-blur-sm rounded-lg p-2 border border-gray-600">
+                <div className="text-center mb-2">
+                  <span className="text-white text-xs font-semibold">Access Completed Video</span>
+                </div>
+                <div className="flex gap-1">
+                  <input
+                    type="text"
+                    placeholder="Enter video ID (from URL or backend)"
+                    className="flex-1 p-1 text-xs rounded bg-gray-700 text-white border border-gray-600 focus:border-purple-500 focus:outline-none"
+                    value={manualVideoId || ''}
+                    onChange={(e) => setManualVideoId(e.target.value)}
+                  />
+                  <button
+                    onClick={() => {
+                      if (manualVideoId?.trim()) {
+                        downloadFile('video', manualVideoId.trim(), getFilename('video', 'manual_download'));
+                      }
+                    }}
+                    disabled={!manualVideoId?.trim()}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold py-1 px-2 rounded text-xs"
+                    title="Download video by ID"
+                  >
+                    ⬇️
+                  </button>
+                </div>
+              </div>
+
               {/* Test Results */}
               {testResults && (
                 <div className="bg-black/30 backdrop-blur-sm rounded-lg p-2 border border-gray-700">
