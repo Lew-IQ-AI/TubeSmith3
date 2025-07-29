@@ -453,6 +453,42 @@ function App() {
     };
   }, [statusPollingInterval]);
 
+  // Force status refresh function for debugging stuck videos
+  const forceStatusRefresh = async () => {
+    if (!videoProcessingStatus?.video_id) return;
+    
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/video-status/${videoProcessingStatus.video_id}`);
+      if (response.ok) {
+        const status = await response.json();
+        console.log('Force refresh status:', status);
+        setVideoProcessingStatus(status);
+        
+        if (status.status === 'completed') {
+          setCurrentStep('✅ Video assembly complete!');
+          setGeneratedContent(prev => ({ 
+            ...prev, 
+            video: {
+              video_id: videoProcessingStatus.video_id,
+              duration: status.duration || 60,
+              file_size: status.file_size || 500000,
+              clips_used: status.clips_used || 1,
+              status: 'success'
+            }
+          }));
+          
+          // Clear polling
+          if (statusPollingInterval) {
+            clearInterval(statusPollingInterval);
+            setStatusPollingInterval(null);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Force refresh error:', error);
+    }
+  };
+
   // Download handlers for different components
   const downloadFile = (fileType, fileId, filename) => {
     if (!fileId) {
