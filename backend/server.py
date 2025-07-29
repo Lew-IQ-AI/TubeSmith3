@@ -14,7 +14,10 @@ from elevenlabs.client import ElevenLabs
 from elevenlabs import VoiceSettings
 import aiofiles
 from dotenv import load_dotenv
+from moviepy.editor import VideoFileClip, AudioFileClip, CompositeVideoClip, concatenate_videoclips, TextClip
+import cv2
 import tempfile
+import shutil
 import moviepy as mp
 import ffmpeg
 from pathlib import Path
