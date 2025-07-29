@@ -374,10 +374,20 @@ async def generate_youtube_metadata(request: dict):
 video_status = {}
 
 def clear_video_status():
-    """Clear all video status on startup"""
+    """Clear all video status on startup - both memory and persistent files"""
     global video_status
     video_status = {}
-    print("Video status cache cleared on startup")
+    
+    # Also clear persistent status files that contain old errors
+    import os, glob
+    status_files = glob.glob("generated_content/status/*.json")
+    for file_path in status_files:
+        try:
+            os.remove(file_path)
+        except:
+            pass
+    
+    print(f"Video status cache cleared on startup: {len(status_files)} persistent files removed")
 
 def update_video_status(video_id: str, status: str, progress: int = 0, message: str = "", error: str = ""):
     """Update video processing status"""
