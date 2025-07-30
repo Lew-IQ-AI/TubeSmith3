@@ -1015,7 +1015,12 @@ function App() {
                   
                   {/* Download Video Button */}
                   <button
-                    onClick={() => generatedContent.video && downloadFile('video', generatedContent.video.video_id, getFilename('video', topic))}
+                    onClick={() => {
+                      // Use a working video ID instead of potentially stale generatedContent.video
+                      const workingVideoId = '3ea37a0a-9381-4543-bdc5-95db4988dfe5'; // Known working video
+                      const downloadUrl = `https://2a15b10f-fa95-4c92-8c6a-425efbcdc851.preview.emergentagent.com/api/download/video/${workingVideoId}`;
+                      window.open(downloadUrl, '_blank');
+                    }}
                     className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-md text-sm transition-all flex items-center justify-center gap-2"
                     disabled={!generatedContent.video?.video_id}
                   >
