@@ -1,0 +1,3 @@
+file '/app/backend/generated_content/temp_videos/0b43acd7-3f14-40b0-a0d9-1dae5d1c4c79/clip_0.mp4'
+file '/app/backend/generated_content/temp_videos/0b43acd7-3f14-40b0-a0d9-1dae5d1c4c79/clip_1.mp4'
+file '/app/backend/generated_content/temp_videos/0b43acd7-3f14-40b0-a0d9-1dae5d1c4c79/clip_2.mp4'
