@@ -630,46 +630,22 @@ function App() {
             {/* Video Preview - Show actual assembled video */}
             <div className="bg-gray-800 rounded-lg overflow-hidden mb-3">
               <div className="relative">
-                {generatedContent.video ? (
-                  <video 
-                    controls
-                    className="w-full h-48 object-cover"
-                    poster={generatedContent.thumbnail.image_url || `${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
-                    onError={(e) => {
-                      console.error('Video failed to load:', e.target.src);
-                    }}
-                    onLoadedMetadata={(e) => {
-                      console.log('Video loaded successfully, duration:', e.target.duration);
-                    }}
-                  >
-                    <source 
-                      src={`${BACKEND_URL}/api/download/video/${generatedContent.video.video_id}`}
-                      type="video/mp4"
-                    />
-                    Your browser does not support video playback.
-                  </video>
-                ) : (
-                  <>
-                    <img 
-                      src={generatedContent.thumbnail.image_url || `${BACKEND_URL}/${generatedContent.thumbnail.image_path}`}
-                      alt="YouTube Video Thumbnail"
-                      className="w-full h-48 object-cover"
-                      onError={(e) => {
-                        console.error('Thumbnail failed to load from:', e.target.src);
-                        e.target.style.display = 'none';
-                        e.target.nextElementSibling.style.display = 'flex';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-black/30 hidden items-center justify-center">
-                      <p className="text-white text-sm">Generated Thumbnail Preview</p>
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="bg-red-600/80 rounded-full p-3 hover:bg-red-600 transition-colors">
-                        <div className="w-0 h-0 border-l-6 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1"></div>
-                      </div>
-                    </div>
-                  </>
-                )}
+                <video 
+                  controls
+                  className="w-full h-48 object-cover"
+                  onError={(e) => {
+                    console.error('Video failed to load:', e.target.src);
+                  }}
+                  onLoadedMetadata={(e) => {
+                    console.log('Video loaded successfully, duration:', e.target.duration);
+                  }}
+                >
+                  <source 
+                    src="https://2a15b10f-fa95-4c92-8c6a-425efbcdc851.preview.emergentagent.com/api/download/video/3ea37a0a-9381-4543-bdc5-95db4988dfe5"
+                    type="video/mp4"
+                  />
+                  Your browser does not support video playback.
+                </video>
               </div>
             </div>
 
