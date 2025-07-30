@@ -872,56 +872,34 @@ function App() {
                 </button>
               </div>
 
-              {/* Manual Video Download - Always visible for accessing completed videos */}
+              {/* Manual Video Download - For accessing completed videos */}
               <div className="bg-gray-800/30 backdrop-blur-sm rounded-lg p-3 border border-gray-600">
                 <div className="text-center mb-3">
-                  <span className="text-white text-sm font-semibold">📥 Download Completed Videos</span>
-                </div>
-                
-                {/* Quick access to recent videos */}
-                <div className="space-y-2 mb-3">
-                  <div className="text-xs text-gray-400 text-center">Recent Videos:</div>
-                  <div className="flex flex-col gap-1">
-                    <button
-                      onClick={() => window.open('https://2a15b10f-fa95-4c92-8c6a-425efbcdc851.preview.emergentagent.com/api/download/video/3ea37a0a-9381-4543-bdc5-95db4988dfe5', '_blank')}
-                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs w-full"
-                    >
-                      ⬇️ Download Test Video 1
-                    </button>
-                    <button
-                      onClick={() => window.open('https://2a15b10f-fa95-4c92-8c6a-425efbcdc851.preview.emergentagent.com/api/download/video/c035dfac-a742-4f74-8c24-9962dacf75de', '_blank')}
-                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs w-full"
-                    >
-                      ⬇️ Download Test Video 2  
-                    </button>
-                  </div>
+                  <span className="text-white text-sm font-semibold">📥 Access Completed Videos</span>
                 </div>
                 
                 {/* Manual video ID input */}
-                <div className="border-t border-gray-600 pt-2">
-                  <div className="text-xs text-gray-400 text-center mb-2">Or enter video ID:</div>
-                  <div className="flex gap-1">
-                    <input
-                      type="text"
-                      placeholder="Enter video ID"
-                      className="flex-1 p-1 text-xs rounded bg-gray-700 text-white border border-gray-600 focus:border-purple-500 focus:outline-none"
-                      value={manualVideoId || ''}
-                      onChange={(e) => setManualVideoId(e.target.value)}
-                    />
-                    <button
-                      onClick={() => {
-                        if (manualVideoId?.trim()) {
-                          const downloadUrl = `https://2a15b10f-fa95-4c92-8c6a-425efbcdc851.preview.emergentagent.com/api/download/video/${manualVideoId.trim()}`;
-                          window.open(downloadUrl, '_blank');
-                        }
-                      }}
-                      disabled={!manualVideoId?.trim()}
-                      className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold py-1 px-2 rounded text-xs"
-                      title="Download video by ID"
-                    >
-                      ⬇️
-                    </button>
-                  </div>
+                <div className="flex gap-1">
+                  <input
+                    type="text"
+                    placeholder="Enter video ID"
+                    className="flex-1 p-1 text-xs rounded bg-gray-700 text-white border border-gray-600 focus:border-purple-500 focus:outline-none"
+                    value={manualVideoId || ''}
+                    onChange={(e) => setManualVideoId(e.target.value)}
+                  />
+                  <button
+                    onClick={() => {
+                      if (manualVideoId?.trim()) {
+                        const downloadUrl = `https://2a15b10f-fa95-4c92-8c6a-425efbcdc851.preview.emergentagent.com/api/download/video/${manualVideoId.trim()}`;
+                        window.open(downloadUrl, '_blank');
+                      }
+                    }}
+                    disabled={!manualVideoId?.trim()}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold py-1 px-2 rounded text-xs"
+                    title="Download video by ID"
+                  >
+                    ⬇️
+                  </button>
                 </div>
               </div>
 
