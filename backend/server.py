@@ -607,8 +607,8 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             print(f"Working directory: {os.getcwd()}")
             print(f"FFmpeg path exists: {os.path.exists('/usr/bin/ffmpeg')}")
             
-            # Run FFmpeg with extended timeout for ARM64 architecture (needs ~13 minutes for 78s audio)
-            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=900, cwd="/app/backend")  # 15 minutes
+            # Run FFmpeg with extended timeout for ARM64 architecture (video processing needs more time)
+            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=600, cwd="/app/backend")  # 10 minutes
             
             print(f"FFmpeg completed with return code: {result.returncode}")
             if result.stdout:
