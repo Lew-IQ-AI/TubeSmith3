@@ -549,21 +549,22 @@ def process_video_background(video_id: str, script_id: str, topic: str):
                             absolute_path = os.path.abspath(clip['path'])
                             f.write(f"file '{absolute_path}'\n")
                     
-                    # Concatenate clips and add audio
+                    # Concatenate clips and add audio (handle video-only clips)
                     ffmpeg_cmd = [
                         '/usr/bin/ffmpeg', '-y',
                         '-f', 'concat',
                         '-safe', '0',
-                        '-i', clips_list_path,
-                        '-i', audio_path,
-                        '-c:v', 'libx264',
-                        '-c:a', 'aac',
-                        '-preset', 'medium',
-                        '-crf', '23',
+                        '-i', clips_list_path,          # Video clips (concatenated)
+                        '-i', audio_path,               # Audio track
+                        '-c:v', 'libx264',              # Re-encode video to fix timestamps
+                        '-c:a', 'aac',                  # Audio codec
+                        '-preset', 'medium',            # Balance speed vs quality
+                        '-crf', '23',                   # Good quality
                         '-vf', f'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2',
-                        '-t', str(audio_duration),
-                        '-shortest',
-                        '-movflags', '+faststart',
+                        '-t', str(audio_duration),      # Limit to audio duration
+                        '-avoid_negative_ts', 'make_zero',  # Fix timestamp issues
+                        '-fflags', '+genpts',           # Generate presentation timestamps
+                        '-movflags', '+faststart',      # Web streaming optimization
                         output_path
                     ]
                     
