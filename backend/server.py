@@ -135,16 +135,26 @@ async def generate_script(request: VideoRequest):
         - Write approximately {word_target} words ({request.duration_minutes} minutes of content)
         - Include a strong hook in the first 15 seconds
         - Use storytelling techniques to maintain engagement
-        - Add dramatic pauses and emphasis markers
-        - Write in a conversational, engaging tone
+        - Write in a conversational, engaging tone for voiceover narration
         - Include call-to-action at the end
         
-        Format the script with:
-        [PAUSE] for dramatic pauses
-        [EMPHASIS] around key phrases
+        CRITICAL: Write ONLY the spoken narration text. Do NOT include:
+        - Stage directions (setup, fade in, fade out, cut to, etc.)
+        - Technical instructions (zoom in, close-up, pan to, etc.)
+        - Video editing notes (transition, overlay, graphics, etc.)
+        - Camera directions (wide shot, medium shot, etc.)
+        - Any text that is not meant to be spoken aloud
+        
+        Format requirements:
+        - Use natural speech patterns and pauses
+        - Write complete sentences that flow naturally when spoken
+        - Avoid brackets, parentheses, or special formatting
+        - Make it sound natural for AI voice generation
         
         Topic: {request.topic}
         Duration: {request.duration_minutes} minutes
+        
+        Generate ONLY the spoken script content - nothing else.
         """
         
         # Use different models based on content length for better performance
