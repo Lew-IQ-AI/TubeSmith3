@@ -843,7 +843,7 @@ function App() {
                         alt="Thumbnail"
                         className="w-full h-8 object-cover rounded mb-1"
                       />
-                      <div className="text-xs text-green-300">DALL-E 3</div>
+                      <div className="text-xs text-green-300">AI Generated</div>
                     </div>
                   ) : (
                     <div className="text-xs text-gray-400">Waiting...</div>
