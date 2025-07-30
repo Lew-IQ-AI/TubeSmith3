@@ -1,0 +1,1 @@
+{"status": "failed", "progress": 0, "message": "", "error": "Video creation error: [Errno 2] No such file or directory: '/usr/bin/ffmpeg'", "timestamp": 1753879151.129664}
