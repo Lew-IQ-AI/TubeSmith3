@@ -819,10 +819,10 @@ function App() {
                   title={generatedContent.audio ? 'Click to download voiceover MP3' : 'Voiceover not ready'}
                 >
                   <div className="text-xs font-semibold text-white mb-1">
-                    {generatedContent.audio ? '✅' : '⏳'} Voice
+                    {generatedContent.audio ? '✅' : '⏳'} Voice Over
                   </div>
                   {generatedContent.audio ? (
-                    <div className="text-xs text-green-300">ElevenLabs AI</div>
+                    <div className="text-xs text-green-300">AI Generated</div>
                   ) : (
                     <div className="text-xs text-gray-400">Waiting...</div>
                   )}
