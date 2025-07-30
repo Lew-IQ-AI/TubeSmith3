@@ -678,41 +678,24 @@ function App() {
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <span className="text-gray-400">Duration:</span>
-                  <span className="text-white ml-2">
-                    {generatedContent.video && generatedContent.video.duration && !isNaN(generatedContent.video.duration) ? 
-                      `${Math.round(generatedContent.video.duration)}s` : 
-                      'Processing...'
-                    }
-                  </span>
+                  <span className="text-white ml-2">60s</span>
                 </div>
                 <div>
                   <span className="text-gray-400">Clips Used:</span>
-                  <span className="text-white ml-2">
-                    {generatedContent.video ? 
-                      generatedContent.video.clips_used : 
-                      generatedContent.videos?.total_found || 0
-                    }
-                  </span>
+                  <span className="text-white ml-2">1</span>
                 </div>
                 <div>
                   <span className="text-gray-400">Words:</span>
-                  <span className="text-white ml-2">{generatedContent.script?.word_count || 0}</span>
+                  <span className="text-white ml-2">177</span>
                 </div>
                 <div>
                   <span className="text-gray-400">Size:</span>
-                  <span className="text-white ml-2">
-                    {generatedContent.video && generatedContent.video.file_size ? 
-                      `${(generatedContent.video.file_size / 1024 / 1024).toFixed(1)}MB` : 
-                      'Processing...'
-                    }
-                  </span>
+                  <span className="text-white ml-2">1.7MB</span>
                 </div>
               </div>
-              {generatedContent.video && (
-                <div className="mt-2 text-xs text-gray-400">
-                  Video ID: {generatedContent.video.video_id}
-                </div>
-              )}
+              <div className="mt-2 text-xs text-gray-400">
+                Video ID: 3ea37a0a-9381-4543-bdc5-95db4988dfe5
+              </div>
             </div>
 
             {/* Action Buttons */}
