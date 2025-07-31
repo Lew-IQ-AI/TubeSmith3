@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-07-29T22:30:39.681070",
+  "timestamp": "2025-07-31T14:07:35.281346",
   "total_tests": 17,
   "passed_tests": 17,
   "success_rate": 1.0,
@@ -8,103 +8,103 @@
       "name": "Health Check",
       "success": true,
       "details": "Status: healthy, Message: AI YouTube Generator API is running",
-      "timestamp": "2025-07-29T22:28:45.336872"
+      "timestamp": "2025-07-31T14:05:36.234051"
     },
     {
       "name": "OpenAI Integration",
       "success": true,
       "details": "Working",
-      "timestamp": "2025-07-29T22:28:47.723902"
+      "timestamp": "2025-07-31T14:05:37.919207"
     },
     {
       "name": "ElevenLabs Integration",
       "success": true,
       "details": "Working",
-      "timestamp": "2025-07-29T22:28:47.723916"
+      "timestamp": "2025-07-31T14:05:37.919225"
     },
     {
       "name": "Pexels Integration",
       "success": true,
       "details": "Working",
-      "timestamp": "2025-07-29T22:28:47.723921"
+      "timestamp": "2025-07-31T14:05:37.919234"
     },
     {
       "name": "AI Integrations Test",
       "success": true,
       "details": "OpenAI: success, ElevenLabs: success, Pexels: success",
-      "timestamp": "2025-07-29T22:28:47.723927"
+      "timestamp": "2025-07-31T14:05:37.919242"
     },
     {
       "name": "Script Generation",
       "success": true,
-      "details": "Script ID: bbb8c8eb-b6d2-40e4-b8b1-b4200948177a, Words: 726",
-      "timestamp": "2025-07-29T22:29:05.493919"
+      "details": "Script ID: 4014dda9-567f-4815-b834-a0ae47737333, Words: 707",
+      "timestamp": "2025-07-31T14:05:57.163543"
     },
     {
       "name": "Voice Generation",
       "success": true,
-      "details": "Audio: generated_content/audio/bbb8c8eb-b6d2-40e4-b8b1-b4200948177a.mp3",
-      "timestamp": "2025-07-29T22:30:02.049518"
+      "details": "Audio: generated_content/audio/4014dda9-567f-4815-b834-a0ae47737333.mp3",
+      "timestamp": "2025-07-31T14:06:51.440867"
     },
     {
       "name": "Thumbnail Generation",
       "success": true,
-      "details": "Thumbnail ID: fd2968ea-2011-4bcc-80f7-5040f676711e",
-      "timestamp": "2025-07-29T22:30:21.849201"
+      "details": "Thumbnail ID: 60ed95c1-510d-4233-a0d5-7b83d58edb74",
+      "timestamp": "2025-07-31T14:07:15.468188"
     },
     {
       "name": "Stock Videos Search",
       "success": true,
       "details": "Videos found: 5",
-      "timestamp": "2025-07-29T22:30:24.229961"
+      "timestamp": "2025-07-31T14:07:17.883111"
     },
     {
       "name": "YouTube Metadata Generation",
       "success": true,
-      "details": "Metadata generated: 3d11a1e0-7f98-4d02-9cfc-47f62cfe1492",
-      "timestamp": "2025-07-29T22:30:35.216014"
+      "details": "Metadata generated: 2b6b663c-fdbf-4a87-8f1b-2b2e0c0ff2f0",
+      "timestamp": "2025-07-31T14:07:32.802593"
     },
     {
       "name": "Download Script",
       "success": true,
       "details": "\u2705 1169 bytes, text/plain; charset=utf-8",
-      "timestamp": "2025-07-29T22:30:39.320629"
+      "timestamp": "2025-07-31T14:07:34.903138"
     },
     {
       "name": "Download Audio",
       "success": true,
       "details": "\u2705 383105 bytes, audio/mpeg",
-      "timestamp": "2025-07-29T22:30:39.377217"
+      "timestamp": "2025-07-31T14:07:34.967844"
     },
     {
       "name": "Download Thumbnail",
       "success": true,
       "details": "\u2705 2783937 bytes, image/png",
-      "timestamp": "2025-07-29T22:30:39.454099"
+      "timestamp": "2025-07-31T14:07:35.061783"
     },
     {
       "name": "Download Video",
       "success": true,
       "details": "\u2705 1422790 bytes, video/mp4",
-      "timestamp": "2025-07-29T22:30:39.524453"
+      "timestamp": "2025-07-31T14:07:35.128176"
     },
     {
       "name": "Invalid File Type Handling",
       "success": true,
       "details": "HTTP 400 (expected 400)",
-      "timestamp": "2025-07-29T22:30:39.577020"
+      "timestamp": "2025-07-31T14:07:35.177616"
     },
     {
       "name": "Non-existent File Handling",
       "success": true,
       "details": "HTTP 404 (expected 404)",
-      "timestamp": "2025-07-29T22:30:39.629703"
+      "timestamp": "2025-07-31T14:07:35.227475"
     },
     {
       "name": "File Download",
       "success": true,
-      "details": "Downloaded 4882 bytes, text/plain; charset=utf-8",
-      "timestamp": "2025-07-29T22:30:39.679496"
+      "details": "Downloaded 4436 bytes, text/plain; charset=utf-8",
+      "timestamp": "2025-07-31T14:07:35.279511"
     }
   ]
 }
