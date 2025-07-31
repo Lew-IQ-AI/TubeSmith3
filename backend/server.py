@@ -640,11 +640,13 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             print(f"DEBUG: FFmpeg succeeded, checking output file: {output_path}")
             
         except subprocess.TimeoutExpired:
-            print("FFmpeg process timed out")
+            print("DEBUG: FFmpeg process timed out")
             update_video_status(video_id, "failed", 0, "", "Video rendering timed out")
             return
         except Exception as e:
-            print(f"Exception during video creation: {str(e)}")
+            print(f"DEBUG: Exception during video creation: {str(e)}")
+            import traceback
+            traceback.print_exc()
             update_video_status(video_id, "failed", 0, "", f"Video creation error: {str(e)}")
             return
         
