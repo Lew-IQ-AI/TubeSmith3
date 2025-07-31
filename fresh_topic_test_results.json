@@ -1,0 +1,92 @@
+{
+  "test_type": "fresh_topic_end_to_end",
+  "timestamp": "2025-07-31T14:02:28.538976",
+  "focus": "artificial_intelligence_and_ocean_conservation",
+  "results": [
+    {
+      "test": "Script Generation - artificial intelligence",
+      "success": true,
+      "details": "ID: 73646a65-e757-4013-b366-1b5021f27adb, Words: 293",
+      "duration": 8.00017499923706,
+      "timestamp": "2025-07-31T13:59:39.830839"
+    },
+    {
+      "test": "Voice Generation - artificial intelligence",
+      "success": true,
+      "details": "Audio generated successfully",
+      "duration": 20.004361152648926,
+      "timestamp": "2025-07-31T13:59:59.835304"
+    },
+    {
+      "test": "Thumbnail Generation - artificial intelligence",
+      "success": true,
+      "details": "Thumbnail generated successfully",
+      "duration": 21.004191637039185,
+      "timestamp": "2025-07-31T14:00:20.839589"
+    },
+    {
+      "test": "Video Assembly - artificial intelligence",
+      "success": true,
+      "details": "Video ID: 00e4d642-d893-4b56-bd93-a2e05174a163",
+      "duration": 0.696413516998291,
+      "timestamp": "2025-07-31T14:00:21.536376"
+    },
+    {
+      "test": "Video Processing - artificial intelligence",
+      "success": true,
+      "details": "Size: 262192 bytes, Duration: 60s, Clips: 1",
+      "duration": 28.5504207611084,
+      "timestamp": "2025-07-31T14:00:53.587767"
+    },
+    {
+      "test": "Video Download - artificial intelligence",
+      "success": true,
+      "details": "Downloaded 262192 bytes, Type: video/mp4",
+      "duration": 0.8989019393920898,
+      "timestamp": "2025-07-31T14:00:54.526775"
+    },
+    {
+      "test": "Script Generation - ocean conservation",
+      "success": true,
+      "details": "ID: c1c70056-92f5-440c-9c3d-726fc55da2a5, Words: 292",
+      "duration": 11.407165765762329,
+      "timestamp": "2025-07-31T14:01:05.938526"
+    },
+    {
+      "test": "Voice Generation - ocean conservation",
+      "success": true,
+      "details": "Audio generated successfully",
+      "duration": 21.20117688179016,
+      "timestamp": "2025-07-31T14:01:27.187094"
+    },
+    {
+      "test": "Thumbnail Generation - ocean conservation",
+      "success": true,
+      "details": "Thumbnail generated successfully",
+      "duration": 21.9407639503479,
+      "timestamp": "2025-07-31T14:01:49.133242"
+    },
+    {
+      "test": "Video Assembly - ocean conservation",
+      "success": true,
+      "details": "Video ID: 58724a8a-4e95-484c-a0c3-78f3ae7732a0",
+      "duration": 0.7015626430511475,
+      "timestamp": "2025-07-31T14:01:49.835040"
+    },
+    {
+      "test": "Video Processing - ocean conservation",
+      "success": true,
+      "details": "Size: 262192 bytes, Duration: 60s, Clips: 1",
+      "duration": 34.75113582611084,
+      "timestamp": "2025-07-31T14:02:28.029209"
+    },
+    {
+      "test": "Video Download - ocean conservation",
+      "success": true,
+      "details": "Downloaded 262192 bytes, Type: video/mp4",
+      "duration": 0.5067775249481201,
+      "timestamp": "2025-07-31T14:02:28.536082"
+    }
+  ],
+  "overall_success": true
+}
