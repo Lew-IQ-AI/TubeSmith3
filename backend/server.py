@@ -504,6 +504,7 @@ def process_video_background(video_id: str, script_id: str, topic: str):
         os.makedirs(temp_video_dir, exist_ok=True)
         
         try:
+            print(f"DEBUG: About to start FFmpeg processing. Stock videos: {len(stock_videos) if stock_videos else 0}")
             if stock_videos and len(stock_videos) > 0:
                 # OPTION 1: Use stock video clips (dynamic video)
                 print("Creating dynamic video with stock footage...")
