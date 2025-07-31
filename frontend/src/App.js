@@ -641,7 +641,7 @@ function App() {
                   }}
                 >
                   <source 
-                    src="https://2a15b10f-fa95-4c92-8c6a-425efbcdc851.preview.emergentagent.com/api/download/video/3ea37a0a-9381-4543-bdc5-95db4988dfe5"
+                    src="https://42998885-3c1d-469d-bc1a-ade47f549193.preview.emergentagent.com/api/download/video/3ea37a0a-9381-4543-bdc5-95db4988dfe5"
                     type="video/mp4"
                   />
                   Your browser does not support video playback.
@@ -890,7 +890,7 @@ function App() {
                   <button
                     onClick={() => {
                       if (manualVideoId?.trim()) {
-                        const downloadUrl = `https://2a15b10f-fa95-4c92-8c6a-425efbcdc851.preview.emergentagent.com/api/download/video/${manualVideoId.trim()}`;
+                        const downloadUrl = `https://42998885-3c1d-469d-bc1a-ade47f549193.preview.emergentagent.com/api/download/video/${manualVideoId.trim()}`;
                         window.open(downloadUrl, '_blank');
                       }
                     }}
@@ -955,7 +955,7 @@ function App() {
                     onClick={() => {
                       // Use a working video ID instead of potentially stale generatedContent.video
                       const workingVideoId = '3ea37a0a-9381-4543-bdc5-95db4988dfe5'; // Known working video
-                      const downloadUrl = `https://2a15b10f-fa95-4c92-8c6a-425efbcdc851.preview.emergentagent.com/api/download/video/${workingVideoId}`;
+                      const downloadUrl = `https://42998885-3c1d-469d-bc1a-ade47f549193.preview.emergentagent.com/api/download/video/${workingVideoId}`;
                       window.open(downloadUrl, '_blank');
                     }}
                     className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-md text-sm transition-all flex items-center justify-center gap-2"

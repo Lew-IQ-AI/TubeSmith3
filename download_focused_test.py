@@ -9,7 +9,7 @@ import sys
 from datetime import datetime
 
 class DownloadTester:
-    def __init__(self, base_url="https://2a15b10f-fa95-4c92-8c6a-425efbcdc851.preview.emergentagent.com"):
+    def __init__(self, base_url="https://42998885-3c1d-469d-bc1a-ade47f549193.preview.emergentagent.com"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
