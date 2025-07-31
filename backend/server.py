@@ -658,20 +658,26 @@ def process_video_background(video_id: str, script_id: str, topic: str):
         
         # Check if video was created successfully
         try:
+            print(f"DEBUG: Checking output file: {output_path}")
             if not os.path.exists(output_path):
-                print(f"Output file does not exist: {output_path}")
+                print(f"DEBUG: Output file does not exist: {output_path}")
+                # List what files ARE in the videos directory
+                videos_dir = "generated_content/videos"
+                if os.path.exists(videos_dir):
+                    files_in_dir = os.listdir(videos_dir)
+                    print(f"DEBUG: Files in videos directory: {files_in_dir[-5:]}")  # Show last 5 files
                 update_video_status(video_id, "failed", 0, "", "Video file was not created")
                 return
                 
             file_size = os.path.getsize(output_path)
-            print(f"Video file created successfully: {file_size} bytes")
+            print(f"DEBUG: Video file created successfully: {file_size} bytes")
             
             if file_size < 10000:  # If file is too small (less than 10KB), it probably failed
-                print(f"Video file too small: {file_size} bytes")
+                print(f"DEBUG: Video file too small: {file_size} bytes")
                 update_video_status(video_id, "failed", 0, "", f"Video file too small ({file_size} bytes) - creation failed")
                 return
         except Exception as e:
-            print(f"Error checking video file: {str(e)}")
+            print(f"DEBUG: Error checking video file: {str(e)}")
             update_video_status(video_id, "failed", 0, "", "Could not verify video file")
             return
         
