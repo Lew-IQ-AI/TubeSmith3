@@ -592,23 +592,64 @@ def process_video_background(video_id: str, script_id: str, topic: str):
                             absolute_path = os.path.abspath(clip['path'])
                             f.write(f"file '{absolute_path}'\n")
                     
-                    # Create dynamic video with stock clips + audio
+                    # Re-encode clips to ensure compatibility and smooth concatenation
+                    print(f"Re-encoding {len(downloaded_clips)} clips for smooth concatenation...")
+                    reencoded_clips = []
+                    
+                    for i, clip in enumerate(downloaded_clips):
+                        reencoded_path = f"{temp_video_dir}/reencoded_clip_{i}.mp4"
+                        
+                        # Re-encode each clip to ensure consistent format, framerate, and codec
+                        reencode_cmd = [
+                            '/usr/bin/ffmpeg', '-y',
+                            '-i', clip['path'],
+                            '-c:v', 'libx264',
+                            '-c:a', 'aac',  
+                            '-r', '25',  # Consistent frame rate
+                            '-pix_fmt', 'yuv420p',  # Consistent pixel format
+                            '-vf', 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2:color=black',
+                            '-preset', 'fast',
+                            '-crf', '28',
+                            '-avoid_negative_ts', 'make_zero',
+                            '-fflags', '+genpts',
+                            reencoded_path
+                        ]
+                        
+                        try:
+                            reencode_result = subprocess.run(reencode_cmd, capture_output=True, text=True, timeout=120)
+                            if reencode_result.returncode == 0 and os.path.exists(reencoded_path):
+                                reencoded_clips.append({
+                                    'path': reencoded_path,
+                                    'duration': clip['duration']
+                                })
+                                print(f"Re-encoded clip {i}: {clip['duration']}s")
+                            else:
+                                print(f"Failed to re-encode clip {i}: {reencode_result.stderr[:100]}...")
+                                # Use original clip as fallback
+                                reencoded_clips.append(clip)
+                        except Exception as e:
+                            print(f"Error re-encoding clip {i}: {e}")
+                            reencoded_clips.append(clip)
+                    
+                    # Create new clips list with re-encoded clips
+                    reencoded_clips_list_path = f"{temp_video_dir}/reencoded_clips_list.txt"
+                    with open(reencoded_clips_list_path, 'w') as f:
+                        for clip in reencoded_clips:
+                            absolute_path = os.path.abspath(clip['path'])
+                            f.write(f"file '{absolute_path}'\n")
+                    
+                    # Create dynamic video with re-encoded stock clips + audio (no time limit to avoid frame duplication)
                     ffmpeg_cmd = [
                         '/usr/bin/ffmpeg', '-y',
                         '-f', 'concat',
                         '-safe', '0',
-                        '-i', clips_list_path,          # Video clips (concatenated)
-                        '-i', audio_path,               # Audio track
-                        '-c:v', 'libx264',              # Re-encode video to fix timestamps
-                        '-c:a', 'aac',                  # Audio codec
-                        '-preset', 'fast',              # Faster for ARM64
-                        '-crf', '28',                   # Good quality/size balance
-                        '-vf', 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2:color=black',
-                        '-t', str(audio_duration),      # Limit to audio duration
-                        '-avoid_negative_ts', 'make_zero',  # Fix timestamp issues
-                        '-fflags', '+genpts',           # Generate presentation timestamps
-                        '-movflags', '+faststart',      # Web streaming optimization
-                        '-max_muxing_queue_size', '1024', # Handle ARM64 processing delays
+                        '-i', reencoded_clips_list_path,    # Re-encoded video clips
+                        '-i', audio_path,                   # Audio track  
+                        '-c:v', 'copy',                     # Copy video (already re-encoded)
+                        '-c:a', 'aac',                      # Audio codec
+                        '-shortest',                        # Stop when shortest stream ends (let audio control duration)
+                        '-movflags', '+faststart',          # Web streaming optimization
+                        '-max_muxing_queue_size', '1024',   # Handle ARM64 processing delays
                         output_path
                     ]
                     
