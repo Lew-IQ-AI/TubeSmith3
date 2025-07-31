@@ -542,15 +542,46 @@ def process_video_background(video_id: str, script_id: str, topic: str):
                             
                             print(f"Downloaded clip {i}: {clip_duration}s")
                             
-                            # Stop if we have enough duration
-                            if total_clip_duration >= audio_duration:
-                                break
+                            # Continue downloading all available clips (don't stop early)
+                            # We'll handle duration coverage later with looping if needed
                                 
                     except Exception as e:
                         print(f"Error downloading clip {i}: {e}")
                         continue
                 
+                # Check if we have sufficient total duration
+                print(f"Total clip duration: {total_clip_duration}s, Audio duration: {audio_duration}s")
+                
                 if downloaded_clips and len(downloaded_clips) >= 1:
+                    # If total clips are less than audio duration, we need to loop them
+                    if total_clip_duration < audio_duration * 0.8:  # Need at least 80% coverage
+                        print(f"Insufficient clip duration ({total_clip_duration}s < {audio_duration * 0.8}s), creating looped sequence...")
+                        
+                        # Create a looped sequence of clips to cover the full audio duration
+                        looped_clips = []
+                        current_duration = 0
+                        clip_index = 0
+                        
+                        while current_duration < audio_duration and len(looped_clips) < 20:  # Safety limit
+                            source_clip = downloaded_clips[clip_index % len(downloaded_clips)]
+                            loop_clip_path = f"{temp_video_dir}/loop_clip_{len(looped_clips)}.mp4"
+                            
+                            # Copy the clip for looping
+                            import shutil
+                            shutil.copy2(source_clip['path'], loop_clip_path)
+                            
+                            looped_clips.append({
+                                'path': loop_clip_path,
+                                'duration': source_clip['duration']
+                            })
+                            current_duration += source_clip['duration']
+                            clip_index += 1
+                        
+                        # Use looped clips instead of original clips
+                        downloaded_clips = looped_clips
+                        total_clip_duration = sum(clip['duration'] for clip in downloaded_clips)
+                        print(f"Created {len(looped_clips)} looped clips covering {total_clip_duration}s")
+                    
                     # Create video from stock clips + audio
                     update_video_status(video_id, "processing", 70, "Creating dynamic video with stock clips...")
                     
