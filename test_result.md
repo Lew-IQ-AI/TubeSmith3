@@ -126,7 +126,7 @@ backend:
     file: "server.py"
     stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: false
         agent: "main"
@@ -137,6 +137,12 @@ backend:
       - working: true
         agent: "testing"
         comment: "COMPREHENSIVE VIDEO ASSEMBLY TESTING COMPLETED: Full workflow tested successfully - script generation (14.51s), voice generation (38.37s), thumbnail generation (18.88s), video assembly API (0.08s response), video processing completed in 8.7s with 262KB MP4 file, status polling working, recovery mechanism verified, FFmpeg integration confirmed working, video download successful with proper MP4 headers. All 8/8 tests passed. FFmpeg timeout issues completely resolved."
+      - working: false
+        agent: "main"
+        comment: "CRITICAL BUG: FFmpeg was missing again after service restart, causing video assembly to fail with 'Video file was not created' error. Re-enabled Pexels integration but discovered missing FFmpeg execution code in dynamic video path."
+      - working: true
+        agent: "main"
+        comment: "FIXED: 1) Reinstalled FFmpeg system-wide, 2) MAJOR BUG FIX: Added missing FFmpeg execution code in dynamic video path (lines 584-604). The code was building FFmpeg commands for stock video concat but never executing them. Now both static thumbnail and dynamic Pexels stock video paths work. Successful test: 787KB MP4 created with stock footage integration."
 
   - task: "AI Voice Generation API"
     implemented: true
