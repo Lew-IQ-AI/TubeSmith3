@@ -445,10 +445,38 @@ def process_video_background(video_id: str, script_id: str, topic: str):
         # Use the most recent thumbnail
         thumbnail_path = max(thumbnail_files, key=os.path.getctime)
         
-        update_video_status(video_id, "processing", 30, "Preparing video components...")
+        update_video_status(video_id, "processing", 30, "Getting stock video clips...")
         
-        # TODO: Re-enable stock videos once basic video creation works reliably
-        # For now, skip stock video fetching to ensure reliable video creation
+        # Get stock videos from Pexels for this topic
+        stock_videos = []
+        try:
+            import requests
+            headers = {"Authorization": os.environ.get('PEXELS_API_KEY')}
+            search_url = f"https://api.pexels.com/videos/search?query={topic}&per_page=5&size=medium"
+            response = requests.get(search_url, headers=headers, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                for video in data.get('videos', [])[:3]:  # Get top 3 videos
+                    video_files = video.get('video_files', [])
+                    # Get medium quality video
+                    medium_quality = next((vf for vf in video_files if vf.get('quality') == 'hd'), 
+                                        video_files[0] if video_files else None)
+                    
+                    if medium_quality and medium_quality.get('link'):
+                        stock_videos.append({
+                            'url': medium_quality['link'],
+                            'duration': video.get('duration', 10),
+                            'id': video['id']
+                        })
+                        
+                print(f"Found {len(stock_videos)} stock videos for topic: {topic}")
+            else:
+                print(f"Pexels API error: {response.status_code}")
+                
+        except Exception as e:
+            print(f"Error fetching stock videos: {e}")
+            stock_videos = []
         
         update_video_status(video_id, "processing", 60, "Downloading and processing stock videos...")
         
