@@ -499,14 +499,104 @@ def process_video_background(video_id: str, script_id: str, topic: str):
         # Create final video output path
         output_path = f"generated_content/videos/{video_id}.mp4"
         
-        update_video_status(video_id, "processing", 80, "Creating video with improved quality...")
+        # Create video directory for temporary files
+        temp_video_dir = f"generated_content/temp_videos/{video_id}"
+        os.makedirs(temp_video_dir, exist_ok=True)
         
         try:
-            # FOR NOW: Use static thumbnail + audio (RELIABLE) 
-            # TODO: Add stock footage once this works 100%
-            print("Creating reliable static video with enhanced quality...")
+            if stock_videos and len(stock_videos) > 0:
+                # OPTION 1: Use stock video clips (dynamic video)
+                print("Creating dynamic video with stock footage...")
+                update_video_status(video_id, "processing", 50, "Downloading stock video clips...")
+                
+                # Download stock video clips
+                downloaded_clips = []
+                total_clip_duration = 0
+                
+                for i, stock_video in enumerate(stock_videos):
+                    try:
+                        clip_path = f"{temp_video_dir}/clip_{i}.mp4"
+                        
+                        # Download the video clip
+                        import requests
+                        clip_response = requests.get(stock_video['url'], timeout=60)
+                        if clip_response.status_code == 200:
+                            with open(clip_path, 'wb') as f:
+                                f.write(clip_response.content)
+                            
+                            # Get actual duration of downloaded clip
+                            try:
+                                dur_cmd = ['/usr/bin/ffprobe', '-v', 'quiet', '-show_entries', 'format=duration', 
+                                         '-of', 'default=noprint_wrappers=1:nokey=1', clip_path]
+                                dur_result = subprocess.run(dur_cmd, capture_output=True, text=True, timeout=10)
+                                clip_duration = float(dur_result.stdout.strip()) if dur_result.stdout.strip() else 10.0
+                            except:
+                                clip_duration = min(stock_video.get('duration', 10), 20)  # Max 20 seconds per clip
+                            
+                            downloaded_clips.append({
+                                'path': clip_path,
+                                'duration': clip_duration
+                            })
+                            total_clip_duration += clip_duration
+                            
+                            print(f"Downloaded clip {i}: {clip_duration}s")
+                            
+                            # Stop if we have enough duration
+                            if total_clip_duration >= audio_duration:
+                                break
+                                
+                    except Exception as e:
+                        print(f"Error downloading clip {i}: {e}")
+                        continue
+                
+                if downloaded_clips and len(downloaded_clips) >= 1:
+                    # Create video from stock clips + audio
+                    update_video_status(video_id, "processing", 70, "Creating dynamic video with stock clips...")
+                    
+                    # Create FFmpeg input list with absolute paths
+                    clips_list_path = f"{temp_video_dir}/clips_list.txt"
+                    with open(clips_list_path, 'w') as f:
+                        for clip in downloaded_clips:
+                            absolute_path = os.path.abspath(clip['path'])
+                            f.write(f"file '{absolute_path}'\n")
+                    
+                    # Create dynamic video with stock clips + audio
+                    ffmpeg_cmd = [
+                        '/usr/bin/ffmpeg', '-y',
+                        '-f', 'concat',
+                        '-safe', '0',
+                        '-i', clips_list_path,          # Video clips (concatenated)
+                        '-i', audio_path,               # Audio track
+                        '-c:v', 'libx264',              # Re-encode video to fix timestamps
+                        '-c:a', 'aac',                  # Audio codec
+                        '-preset', 'fast',              # Faster for ARM64
+                        '-crf', '28',                   # Good quality/size balance
+                        '-vf', 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2:color=black',
+                        '-t', str(audio_duration),      # Limit to audio duration
+                        '-avoid_negative_ts', 'make_zero',  # Fix timestamp issues
+                        '-fflags', '+genpts',           # Generate presentation timestamps
+                        '-movflags', '+faststart',      # Web streaming optimization
+                        '-max_muxing_queue_size', '1024', # Handle ARM64 processing delays
+                        output_path
+                    ]
+                    
+                    print(f"Creating dynamic video with {len(downloaded_clips)} clips using FFmpeg...")
+                    update_video_status(video_id, "processing", 80, "Assembling dynamic video...")
+                    
+                else:
+                    # Fallback to static thumbnail if no clips downloaded
+                    print("No stock clips available, using static thumbnail...")
+                    raise Exception("No stock clips downloaded successfully")
+                    
+            else:
+                raise Exception("No stock videos found from Pexels")
+                
+        except Exception as e:
+            # OPTION 2: Fallback to static thumbnail + audio
+            print(f"Falling back to static video due to: {e}")
+            update_video_status(video_id, "processing", 80, "Creating static video with thumbnail...")
             
-            # Create video using proven FFmpeg command
+            # Create video using static thumbnail as fallback
             ffmpeg_cmd = [
                 '/usr/bin/ffmpeg', '-y',  # Overwrite output file (use full path)
                 '-loop', '1',    # Loop the image
