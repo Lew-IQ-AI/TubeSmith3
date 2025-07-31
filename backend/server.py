@@ -618,25 +618,26 @@ def process_video_background(video_id: str, script_id: str, topic: str):
             
             update_video_status(video_id, "processing", 80, "Rendering final video...")
             
-            print(f"Starting FFmpeg with command: {' '.join(ffmpeg_cmd)}")
-            print(f"Working directory: {os.getcwd()}")
-            print(f"FFmpeg path exists: {os.path.exists('/usr/bin/ffmpeg')}")
+            print(f"DEBUG: Starting FFmpeg with command: {' '.join(ffmpeg_cmd)}")
+            print(f"DEBUG: Working directory: {os.getcwd()}")
+            print(f"DEBUG: FFmpeg path exists: {os.path.exists('/usr/bin/ffmpeg')}")
+            print(f"DEBUG: Output path will be: {output_path}")
             
             # Run FFmpeg with extended timeout for ARM64 architecture (video processing needs more time)
             result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=600, cwd="/app/backend")  # 10 minutes
             
-            print(f"FFmpeg completed with return code: {result.returncode}")
+            print(f"DEBUG: FFmpeg completed with return code: {result.returncode}")
             if result.stdout:
-                print(f"FFmpeg stdout: {result.stdout[:200]}...")
+                print(f"DEBUG: FFmpeg stdout: {result.stdout[:500]}...")
             if result.stderr:
-                print(f"FFmpeg stderr: {result.stderr[:200]}...")
+                print(f"DEBUG: FFmpeg stderr: {result.stderr[:500]}...")
             
             if result.returncode != 0:
-                print(f"FFmpeg failed with error: {result.stderr}")
+                print(f"DEBUG: FFmpeg failed with error: {result.stderr}")
                 update_video_status(video_id, "failed", 0, "", f"Video rendering failed: {result.stderr[:100]}")
                 return
-            
-            print(f"FFmpeg succeeded, checking output file: {output_path}")
+                
+            print(f"DEBUG: FFmpeg succeeded, checking output file: {output_path}")
             
         except subprocess.TimeoutExpired:
             print("FFmpeg process timed out")
