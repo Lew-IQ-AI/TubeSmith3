@@ -584,6 +584,26 @@ def process_video_background(video_id: str, script_id: str, topic: str):
                     print(f"Creating dynamic video with {len(downloaded_clips)} clips using FFmpeg...")
                     update_video_status(video_id, "processing", 80, "Assembling dynamic video...")
                     
+                    # Execute FFmpeg for dynamic video creation
+                    print(f"DEBUG: Starting dynamic FFmpeg with command: {' '.join(ffmpeg_cmd)}")
+                    print(f"DEBUG: Working directory: {os.getcwd()}")
+                    print(f"DEBUG: Output path will be: {output_path}")
+                    
+                    # Run FFmpeg with extended timeout for ARM64 architecture
+                    result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=600, cwd="/app/backend")
+                    
+                    print(f"DEBUG: Dynamic FFmpeg completed with return code: {result.returncode}")
+                    if result.stdout:
+                        print(f"DEBUG: Dynamic FFmpeg stdout: {result.stdout[:500]}...")
+                    if result.stderr:
+                        print(f"DEBUG: Dynamic FFmpeg stderr: {result.stderr[:500]}...")
+                    
+                    if result.returncode != 0:
+                        print(f"DEBUG: Dynamic FFmpeg failed, falling back to static video: {result.stderr}")
+                        raise Exception(f"Dynamic video creation failed: {result.stderr[:100]}")
+                    
+                    print(f"DEBUG: Dynamic FFmpeg succeeded, checking output file: {output_path}")
+                    
                 else:
                     # Fallback to static thumbnail if no clips downloaded
                     print("No stock clips available, using static thumbnail...")
