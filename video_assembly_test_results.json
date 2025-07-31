@@ -1,58 +1,58 @@
 {
-  "timestamp": "2025-07-29T20:49:49.489515",
+  "timestamp": "2025-07-31T13:56:19.392000",
   "total_tests": 8,
   "passed_tests": 8,
   "success_rate": 1.0,
-  "script_id": "d5424f18-e059-4934-af2c-bedeb8c1eb59",
-  "video_id": "481c5c50-0df4-49d1-9ec1-ece6a45512aa",
+  "script_id": "e66d8d8d-2a97-4e89-8020-0df227e2711f",
+  "video_id": "ef0c5246-b528-45cd-a383-724b4b41589c",
   "results": [
     {
       "name": "Script Generation for Video",
       "success": true,
-      "details": "Script ID: d5424f18-e059-4934-af2c-bedeb8c1eb59, Words: 486, Time: 14.51s",
-      "timestamp": "2025-07-29T20:48:32.847764"
+      "details": "Script ID: e66d8d8d-2a97-4e89-8020-0df227e2711f, Words: 478, Time: 13.45s",
+      "timestamp": "2025-07-31T13:55:10.589521"
     },
     {
       "name": "Voice Generation for Video",
       "success": true,
-      "details": "Audio: generated_content/audio/d5424f18-e059-4934-af2c-bedeb8c1eb59.mp3, Time: 38.37s",
-      "timestamp": "2025-07-29T20:49:13.223132"
+      "details": "Audio: generated_content/audio/e66d8d8d-2a97-4e89-8020-0df227e2711f.mp3, Time: 32.73s",
+      "timestamp": "2025-07-31T13:55:45.320973"
     },
     {
       "name": "Thumbnail Generation for Video",
       "success": true,
-      "details": "Thumbnail ID: 2c833810-30ce-4c39-9c15-cc83eb661fdc, Time: 18.88s",
-      "timestamp": "2025-07-29T20:49:34.107133"
+      "details": "Thumbnail ID: 4f95324d-fd09-4401-8192-5b268c58825e, Time: 18.14s",
+      "timestamp": "2025-07-31T13:56:05.463272"
     },
     {
       "name": "Video Assembly API",
       "success": true,
-      "details": "Video ID: 481c5c50-0df4-49d1-9ec1-ece6a45512aa, Status: processing, Time: 0.08s",
-      "timestamp": "2025-07-29T20:49:37.189926"
+      "details": "Video ID: ef0c5246-b528-45cd-a383-724b4b41589c, Status: processing, Time: 0.09s",
+      "timestamp": "2025-07-31T13:56:08.551677"
     },
     {
       "name": "Video Status Polling",
       "success": true,
-      "details": "Completed in 8.7s, Size: 262192 bytes, Duration: 60s",
-      "timestamp": "2025-07-29T20:49:47.888555"
+      "details": "Completed in 7.6s, Size: 262192 bytes, Duration: 60s",
+      "timestamp": "2025-07-31T13:56:18.131086"
     },
     {
       "name": "Video Status Recovery",
       "success": true,
       "details": "Recovery mechanism working - Status: completed, File size: 262192 bytes",
-      "timestamp": "2025-07-29T20:49:48.388609"
+      "timestamp": "2025-07-31T13:56:18.527088"
     },
     {
       "name": "FFmpeg Integration",
       "success": true,
       "details": "FFmpeg integration working - Video status: completed",
-      "timestamp": "2025-07-29T20:49:48.791582"
+      "timestamp": "2025-07-31T13:56:18.790220"
     },
     {
       "name": "Video Download",
       "success": true,
-      "details": "Downloaded 262192 bytes, Content-Type: video/mp4, Time: 0.67s",
-      "timestamp": "2025-07-29T20:49:49.460427"
+      "details": "Downloaded 524336 bytes, Content-Type: video/mp4, Time: 0.60s",
+      "timestamp": "2025-07-31T13:56:19.389903"
     }
   ]
 }
